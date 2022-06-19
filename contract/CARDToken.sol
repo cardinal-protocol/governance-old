@@ -5,12 +5,11 @@ pragma solidity ^0.8.0;
 // [IMPORT]
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 
-contract CARDToken is ERC20, ERC20Capped, ERC20Burnable, Pausable {
+contract CARDToken is ERC20, ERC20Capped, Pausable {
     // [USING-FORS]
     using SafeERC20 for CARDToken;
     
@@ -58,9 +57,7 @@ contract CARDToken is ERC20, ERC20Capped, ERC20Burnable, Pausable {
         address _to,
         uint256 _amount
     ) internal override(ERC20, ERC20Capped) operatorOnly() {
-        
         ERC20Capped._mint(_to, _amount);
-    
     }
     
 
