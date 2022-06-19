@@ -3,13 +3,12 @@
 pragma solidity ^0.8.0;
 
 // [IMPORT]
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
 
-contract CARDToken is ERC20, ERC20Capped, Pausable {
+contract CARDToken is ERC20Capped, Pausable {
     // [USING-FORS]
     using SafeERC20 for CARDToken;
     
@@ -56,8 +55,9 @@ contract CARDToken is ERC20, ERC20Capped, Pausable {
     function mint(
         address _to,
         uint256 _amount
-    ) external operatorOnly() {
-        ERC20Capped._mint(_to, _amount);
+    ) external operatorOnly() whenNotPaused() {
+        // Call ERC20Capped "_mint" function
+        _mint(_to, _amount);
     }
     
 
@@ -68,11 +68,13 @@ contract CARDToken is ERC20, ERC20Capped, Pausable {
         }
     }
 
-    function pause() public pauserOnly() {
+    function pause() public pauserOnly() whenNotPaused() {
+        // Call Pausable "_pause" function
         super._pause();
     }
 
-    function unpause() public pauserOnly() {
+    function unpause() public pauserOnly() whenPaused() {
+        // Call Pausable "_unpause" function
         super._unpause();
     }
 }
