@@ -57,8 +57,7 @@ contract CARDToken is ERC20Capped, Pausable {
         address _to,
         uint256 _amount
     ) external operatorOnly() whenNotPaused() {
-        // Call ERC20Capped "_mint" function
-        _mint(_to, _amount);
+        super._mint(_to, _amount);
     }
     
 
