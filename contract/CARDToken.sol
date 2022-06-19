@@ -46,7 +46,7 @@ contract CARDToken is ERC20, ERC20Capped, Pausable {
     }
     
     modifier pauserOnly() {
-        require(pausers[ msg.sender ], "!authorized");
+        require(pausers[msg.sender], "!authorized");
 
         _;
     }
