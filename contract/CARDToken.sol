@@ -34,7 +34,7 @@ contract CARDToken is ERC20, ERC20Capped, Pausable {
         ERC20Capped(100 * 1000000 * 1e18)
     {
         operator = msg.sender;
-        pausers[operator] = true;
+        pausers[msg.sender] = true;
     }
     
     
