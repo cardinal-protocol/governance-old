@@ -48,7 +48,7 @@ contract CARDToken is ERC20, ERC20Capped, ERC20Burnable, Pausable {
     
     modifier pauserOnly() {
         require(pausers[ msg.sender ], "!authorized");
-        
+
         _;
     }
 
@@ -57,9 +57,10 @@ contract CARDToken is ERC20, ERC20Capped, ERC20Burnable, Pausable {
     function _mint(
         address _to,
         uint256 _amount
-    ) internal virtual override(ERC20, ERC20Capped) operatorOnly() {
-        // [AUTH]
-        if (msg.sender != operator){ return; }
+    ) internal override(ERC20, ERC20Capped) operatorOnly() {
+        require(ERC20.totalSupply() + _amount <= cap(), "cap exceeded");
+
+        ERC20._mint(_to, _amount);
     }
     
 
