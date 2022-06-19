@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 
-// [IMPORT]
+// [IMPORT] 
 import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 
 
@@ -20,8 +20,6 @@ interface IcvxRewardPool {
 	function lastTimeRewardApplicable() external view returns (uint256);
 
 	function rewardPerToken() external view returns (uint256);
-
-	function earnedReward(address account) external view returns (uint256);
 
 	function earned(address account) external view returns (uint256);
 
