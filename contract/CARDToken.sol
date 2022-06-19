@@ -53,10 +53,10 @@ contract CARDToken is ERC20, ERC20Capped, Pausable {
 
 
     // [FUNCTIONS][MINT]
-    function _mint(
+    function mint(
         address _to,
         uint256 _amount
-    ) internal override(ERC20, ERC20Capped) operatorOnly() {
+    ) external operatorOnly() {
         ERC20Capped._mint(_to, _amount);
     }
     
