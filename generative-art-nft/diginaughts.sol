@@ -2,15 +2,15 @@
 pragma solidity ^0.8.0;
 
 
-// [IMPORT] 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+// [IMPORT]
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
 
 // [CONTRACT] diginaughts
@@ -36,7 +36,7 @@ contract diginaughts is
 
 
 	mapping(address => bool) private whitelist;
-	
+
 
 	// [CONSTRUCTOR]
 	constructor(
@@ -75,19 +75,31 @@ contract diginaughts is
 
 
 	function setTokenURI(uint256 tokenId, string memory _tokenURI) external {
-		require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "WBCyborgs: must have admin role to change token URI");
+		require(
+			hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
+			"WBCyborgs: must have admin role to change token URI"
+		);
+
 		_setTokenURI(tokenId, _tokenURI);
 	}
 
 
 	function setPrice(uint mintPrice) external {
-		require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "WBCyborgs: must have admin role to change price");
+		require(
+			hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
+			"WBCyborgs: must have admin role to change price"
+		);
+
 		_price = mintPrice;
 	}
 
 
 	function setMint(bool openMint, bool openWhitelistMint) external {
-		require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "WBCyborgs: must have admin role to open/close mint");
+		require(
+			hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
+			"Must have admin role to open/close mint"
+		);
+
 		_openMint = openMint;
 		_openWhitelistMint = openWhitelistMint;
 	}
@@ -101,19 +113,19 @@ contract diginaughts is
 	function mint(address[] memory toSend) public payable onlyOwner {
 		require(
 			toSend.length <= 256,
-			"WBCyborgs: max of 256 WBCyborgs per mint"
+			"Max of 256 WBCyborgs per mint"
 		);
 		require(
 			_openMint == true,
-			"WBCyborgs: minting is closed"
+			"Minting is closed"
 		);
 		require(
-			msg.value == _price*toSend.length,
-			"WBCyborgs: must send correct price"
+			msg.value == _price * toSend.length,
+			"Must send correct price"
 		);
 		require(
 			_tokenIdTracker.current() + toSend.length <= _max,
-			"WBCyborgs: not enough WBCyborgs left to be mint amount"
+			"Not enough NFTs left to be mint amount"
 		);
 
 		// For each address to send to..
@@ -129,19 +141,19 @@ contract diginaughts is
 	function mintWhitelist() public payable {
 		require(
 			_openWhitelistMint == true,
-			"WBCyborgs: minting is closed"
+			"Minting is closed"
 		);
 		require(
 			whitelist[msg.sender] == true,
-			"WBCyborgs: user must be whitelisted to mint"
+			"User must be whitelisted to mint"
 		);
 		require(
 			msg.value == _price,
-			"WBCyborgs: must send correct price"
+			"Must send correct price"
 		);
 		require(
 			_tokenIdTracker.current() < _max,
-			"WBCyborgs: all WBCyborgs have been minted"
+			"All NFTs have been minted"
 		);
 		
 		whitelist[msg.sender] = false;
@@ -155,7 +167,11 @@ contract diginaughts is
 
 
 	function whitelistUser(address user) public {
-		require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "WBCyborgs: must have admin role to whitelist address");
+		require(
+			hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
+			"Must have admin role to whitelist address"
+		);
+
 		whitelist[user] = true;
 	}
 
@@ -165,22 +181,35 @@ contract diginaughts is
 	}
 
 
-	function _burn(uint256 tokenId) internal virtual override(ERC721, ERC721URIStorage) {
+	function _burn(uint256 tokenId) internal virtual override(
+		ERC721,
+		ERC721URIStorage
+	) {
 		return ERC721URIStorage._burn(tokenId);
 	}
 
 
-	function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+	function tokenURI(
+		uint256 tokenId
+	) public view override(ERC721, ERC721URIStorage) returns (string memory) {
 		return ERC721URIStorage.tokenURI(tokenId);
 	}
 
 
-	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override(ERC721, ERC721Enumerable) {
+	function _beforeTokenTransfer(
+		address from,
+		address to,
+		uint256 tokenId
+	) internal virtual override(ERC721, ERC721Enumerable) {
 		super._beforeTokenTransfer(from, to, tokenId);
 	}
 
 
-	function supportsInterface(bytes4 interfaceId) public view virtual override(AccessControlEnumerable, ERC721, ERC721Enumerable) returns (bool) {
+	function supportsInterface(bytes4 interfaceId) public view virtual override(
+		AccessControlEnumerable,
+		ERC721,
+		ERC721Enumerable
+	) returns (bool) {
 		return super.supportsInterface(interfaceId);
 	}
 }
