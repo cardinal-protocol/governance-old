@@ -39,7 +39,7 @@ contract diginaughts is
 
 
 	// [CONSTRUCTOR]
-	constructor(
+	constructor (
 		string memory name,
 		string memory symbol,
 		string memory baseTokenURI,
@@ -77,7 +77,7 @@ contract diginaughts is
 	function setTokenURI(uint256 tokenId, string memory _tokenURI) external {
 		require(
 			hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
-			"WBCyborgs: must have admin role to change token URI"
+			"!auth"
 		);
 
 		_setTokenURI(tokenId, _tokenURI);
@@ -87,7 +87,7 @@ contract diginaughts is
 	function setPrice(uint mintPrice) external {
 		require(
 			hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
-			"WBCyborgs: must have admin role to change price"
+			"!auth"
 		);
 
 		_price = mintPrice;
@@ -97,7 +97,7 @@ contract diginaughts is
 	function setMint(bool openMint, bool openWhitelistMint) external {
 		require(
 			hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
-			"Must have admin role to open/close mint"
+			"!auth"
 		);
 
 		_openMint = openMint;
@@ -112,16 +112,16 @@ contract diginaughts is
 
 	function mint(address[] memory toSend) public payable onlyOwner {
 		require(
-			toSend.length <= 256,
-			"Max of 256 WBCyborgs per mint"
+			toSend.length <= 30,
+			"Max of 30 NFTs per mint"
 		);
 		require(
 			_openMint == true,
-			"Minting is closed"
+			"Minting closed"
 		);
 		require(
 			msg.value == _price * toSend.length,
-			"Must send correct price"
+			"Invalid msg.value"
 		);
 		require(
 			_tokenIdTracker.current() + toSend.length <= _max,
