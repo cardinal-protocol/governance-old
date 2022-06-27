@@ -33,7 +33,7 @@ group5 = [
 ]
 
 group6 = [
-r"C:/Users/pract/Desktop/Elephant/Eyes/blue_eye_elephant.png",
+  r"C:/Users/pract/Desktop/Elephant/Eyes/blue_eye_elephant.png",
   r"C:/Users/pract/Desktop/Elephant/Eyes/red_eye_elephant.png"
 
 ]
@@ -61,9 +61,6 @@ def createImage(a,b,c,d,e,f,counter):
   intermediate4 = Image.alpha_composite(intermediate3,image05)
   intermediate5 = Image.alpha_composite(intermediate4,image06)
 
-
-
-
   name = "C:/Users/pract/Desktop/Elephant/Done2/" + str(counter) + ".png"
   intermediate5.save(name)
 
@@ -74,6 +71,5 @@ for a in range(4):
       for d in range(4):
         for e in range(4):
           for f in range(2):
-
             createImage(a,b,c,d,e,f,counter)
             counter = counter + 1
