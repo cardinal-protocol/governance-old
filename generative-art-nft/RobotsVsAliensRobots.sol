@@ -13,8 +13,8 @@ import "@openzeppelin/contracts/utils/escrow/Escrow.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 
-// [CONTRACT] diginaughts
-contract diginaughts is
+// [MAIN-CONTRACT]
+contract RobotsVsAliensRobots is
 	AccessControlEnumerable,
 	ERC721Enumerable,
 	ERC721URIStorage,
