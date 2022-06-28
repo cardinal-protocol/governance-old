@@ -61,14 +61,9 @@ contract diginaughts is
 	}
 
 
-	function setBaseURI(string memory baseURI) external {
-		require(
-			hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
-			"!auth"
-		);
-		
-		_baseTokenURI = baseURI;
-	}
+	function setBaseURI(string memory baseURI) public onlyOwner {
+        _baseTokenURI = baseURI;
+    }
 
 
 	function _baseURI() internal view virtual override returns (string memory) {
@@ -132,68 +127,14 @@ contract diginaughts is
 
 		// For each address to send to..
 		for (uint i = 0; i < toSend.length; i++) {
+			// [internal] mint token
 			_mint(toSend[i], _tokenIdTracker.current());
+
+			// increment token id
 			_tokenIdTracker.increment();
 		}
 
 		payable(_wallet).transfer(msg.value);
-	}
-
-
-	function mintWhitelist() public payable {
-		require(
-			_openWhitelistMint == true,
-			"Minting is closed"
-		);
-		require(
-			whitelist[msg.sender] == true,
-			"User must be whitelisted to mint"
-		);
-		require(
-			msg.value == _price,
-			"Must send correct price"
-		);
-		require(
-			_tokenIdTracker.current() < _max,
-			"All NFTs have been minted"
-		);
-		
-		whitelist[msg.sender] = false;
-
-		_mint(msg.sender, _tokenIdTracker.current());
-		
-		_tokenIdTracker.increment();
-		
-		payable(_wallet).transfer(msg.value);
-	}
-
-
-	function whitelistUser(address user) public {
-		require(
-			hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
-			"Must have admin role to whitelist address"
-		);
-
-		whitelist[user] = true;
-	}
-
-
-	function whitelistStatus(address user) public view returns(bool) {
-		return whitelist[user];
-	}
-
-
-	function _burn(
-		uint256 tokenId
-	) internal virtual override(ERC721,ERC721URIStorage) {
-		return ERC721URIStorage._burn(tokenId);
-	}
-
-
-	function tokenURI(
-		uint256 tokenId
-	) public view override(ERC721, ERC721URIStorage) returns (string memory) {
-		return ERC721URIStorage.tokenURI(tokenId);
 	}
 
 
