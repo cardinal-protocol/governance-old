@@ -59,22 +59,18 @@ contract RobotsVsAliensRobots is
 
 
 	/* [OVERRIDE-REQUIRED-FUNCTIONS] */
-	// _burn
 	function _burn(uint256 tokenId) internal virtual override(ERC721, ERC721URIStorage) {
 		return ERC721URIStorage._burn(tokenId);
 	}
 
-	// tokenURI
 	function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
 		return ERC721URIStorage.tokenURI(tokenId);
 	}
 
-	// _beforeTokenTransfer
 	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override(ERC721, ERC721Enumerable) {
 		super._beforeTokenTransfer(from, to, tokenId);
 	}
 
-	// supportsInterface
 	function supportsInterface(bytes4 interfaceId) public view virtual override(AccessControlEnumerable, ERC721, ERC721Enumerable) returns (bool) {
 		return super.supportsInterface(interfaceId);
 	}
@@ -117,12 +113,12 @@ contract RobotsVsAliensRobots is
 		require(msg.value == _price * toSend.length, "Invalid msg.value");
 		require(_tokenIdTracker.current() + toSend.length <= _max, "Not enough NFTs left to be mint amount");
 
-		// For each address to send to..
+		// For each address, mint the NFT
 		for (uint i = 0; i < toSend.length; i++) {
-			// [internal] mint token
+			// Mint token
 			_mint(toSend[i], _tokenIdTracker.current());
 
-			// increment token id
+			// Increment token id
 			_tokenIdTracker.increment();
 		}
 
