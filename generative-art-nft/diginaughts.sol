@@ -5,7 +5,6 @@ pragma solidity ^0.8.0;
 // [IMPORT]
 // access
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 // token
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
@@ -17,7 +16,6 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 // [CONTRACT] diginaughts
 contract diginaughts is
 	AccessControlEnumerable,
-	Ownable,
 	ERC721Enumerable,
 	ERC721URIStorage,
 	Escrow
@@ -55,6 +53,7 @@ contract diginaughts is
 		_wallet = wallet;
 		_openMint = false;
 		_openWhitelistMint = false;
+		
 		_setupRole(DEFAULT_ADMIN_ROLE, wallet);
 		_setupRole(DEFAULT_ADMIN_ROLE, admin);
 	}
