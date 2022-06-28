@@ -21,12 +21,11 @@ contract RobotsVsAliensRobots is
 	ERC721URIStorage,
 	Escrow
 {
+	// using for
 	using Counters for Counters.Counter;
-	
-	
-	Counters.Counter public _tokenIdTracker;
 
 
+	// init
 	string private _baseTokenURI;
 	uint private _mintPrice;
 	uint private _max;
@@ -34,7 +33,12 @@ contract RobotsVsAliensRobots is
 	bool _openMint;
 
 
+	// init - mapping
 	mapping(address => bool) private whitelist;
+
+
+	// init - Custom Data Types
+	Counters.Counter public _tokenIdTracker;
 
 
 	/* [CONSTRUCTOR] */
@@ -74,6 +78,10 @@ contract RobotsVsAliensRobots is
 	function supportsInterface(bytes4 interfaceId) public view virtual override(AccessControlEnumerable, ERC721, ERC721Enumerable) returns (bool) {
 		return super.supportsInterface(interfaceId);
 	}
+
+
+	/* [REQUIRED-FUNCTIONS] */
+	// Must implement access control utilties here
 
 
 	/* [FUNCTIONS] */
