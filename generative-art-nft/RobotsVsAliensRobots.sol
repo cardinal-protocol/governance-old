@@ -76,7 +76,7 @@ contract RobotsVsAliensRobots is
 	}
 
 
-	/* [CUSTOM-FUNCTIONS] */
+	/* [FUNCTIONS] */
 	function setBaseURI(string memory baseURI) public onlyOwner {
         _baseTokenURI = baseURI;
     }
