@@ -3,24 +3,23 @@ pragma solidity ^0.8.0;
 
 
 // [IMPORT]
+// access
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+// token
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+// utils
 import "@openzeppelin/contracts/utils/escrow/Escrow.sol";
-import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 
 // [CONTRACT] diginaughts
 contract diginaughts is
-	Context,
 	AccessControlEnumerable,
+	Ownable,
 	ERC721Enumerable,
 	ERC721URIStorage,
-	Ownable,
 	Escrow
 {
 	using Counters for Counters.Counter;
@@ -61,6 +60,26 @@ contract diginaughts is
 	}
 
 
+	// [OVERRIDE-REQUIRED-FUNCTIONS]
+	// _burn
+	function _burn(uint256 tokenId) internal virtual override(ERC721, ERC721URIStorage) {
+		return ERC721URIStorage._burn(tokenId);
+	}
+	// tokenURI
+	function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+		return ERC721URIStorage.tokenURI(tokenId);
+	}
+	// _beforeTokenTransfer
+	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override(ERC721, ERC721Enumerable) {
+		super._beforeTokenTransfer(from, to, tokenId);
+	}
+	// supportsInterface
+	function supportsInterface(bytes4 interfaceId) public view virtual override(AccessControlEnumerable, ERC721, ERC721Enumerable) returns (bool) {
+		return super.supportsInterface(interfaceId);
+	}
+
+
+	// [CUSTOM-FUNCTIONS]
 	function setBaseURI(string memory baseURI) public onlyOwner {
         _baseTokenURI = baseURI;
     }
@@ -135,21 +154,5 @@ contract diginaughts is
 		}
 
 		payable(_wallet).transfer(msg.value);
-	}
-
-
-	function _beforeTokenTransfer(
-		address from,
-		address to,
-		uint256 tokenId
-	) internal virtual override(ERC721, ERC721Enumerable) {
-		super._beforeTokenTransfer(from, to, tokenId);
-	}
-
-
-	function supportsInterface(
-		bytes4 interfaceId
-	) public view virtual override(AccessControlEnumerable, ERC721, ERC721Enumerable) returns (bool) {
-		return super.supportsInterface(interfaceId);
 	}
 }
