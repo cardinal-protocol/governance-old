@@ -1922,7 +1922,12 @@ contract BoredApeYachtClub is ERC721, Ownable {
 
     uint256 public REVEAL_TIMESTAMP;
 
-    constructor(string memory name, string memory symbol, uint256 maxNftSupply, uint256 saleStart) ERC721(name, symbol) {
+    constructor(
+        string memory name,
+        string memory symbol,
+        uint256 maxNftSupply,
+        uint256 saleStart
+    ) ERC721(name, symbol) {
         MAX_APES = maxNftSupply;
         REVEAL_TIMESTAMP = saleStart + (86400 * 9);
     }

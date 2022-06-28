@@ -49,8 +49,7 @@ contract diginaughts is
 		uint max,
 		address wallet,
 		address admin
-	) ERC721(name, symbol)
-	{
+	) ERC721(name, symbol) {
 		_baseTokenURI = baseTokenURI;
 		_price = mintPrice;
 		_max = max;
@@ -62,25 +61,22 @@ contract diginaughts is
 	}
 
 
-	function setBaseURI(string memory baseURI) external
-	{
+	function setBaseURI(string memory baseURI) external {
 		require(
 			hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
-			"WBCyborgs: must have admin role to change base URI"
+			"!auth"
 		);
 		
 		_baseTokenURI = baseURI;
 	}
 
 
-	function _baseURI() internal view virtual override returns (string memory)
-	{
+	function _baseURI() internal view virtual override returns (string memory) {
 		return _baseTokenURI;
 	}
 
 
-	function setTokenURI(uint256 tokenId, string memory _tokenURI) external
-	{
+	function setTokenURI(uint256 tokenId, string memory _tokenURI) external {
 		require(
 			hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
 			"!auth"
@@ -90,8 +86,7 @@ contract diginaughts is
 	}
 
 
-	function setPrice(uint mintPrice) external
-	{
+	function setPrice(uint mintPrice) external {
 		require(
 			hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
 			"!auth"
@@ -101,8 +96,7 @@ contract diginaughts is
 	}
 
 
-	function setMint(bool openMint, bool openWhitelistMint) external
-	{
+	function setMint(bool openMint, bool openWhitelistMint) external {
 		require(
 			hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
 			"!auth"
@@ -113,14 +107,12 @@ contract diginaughts is
 	}
 
 
-	function price() public view returns (uint)
-	{
+	function price() public view returns (uint) {
 		return _price;
 	}
 
 
-	function mint(address[] memory toSend) public payable onlyOwner
-	{
+	function mint(address[] memory toSend) public payable onlyOwner {
 		require(
 			toSend.length <= 30,
 			"Max of 30 NFTs per mint"
@@ -148,8 +140,7 @@ contract diginaughts is
 	}
 
 
-	function mintWhitelist() public payable
-	{
+	function mintWhitelist() public payable {
 		require(
 			_openWhitelistMint == true,
 			"Minting is closed"
@@ -177,8 +168,7 @@ contract diginaughts is
 	}
 
 
-	function whitelistUser(address user) public
-	{
+	function whitelistUser(address user) public {
 		require(
 			hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
 			"Must have admin role to whitelist address"
@@ -188,24 +178,21 @@ contract diginaughts is
 	}
 
 
-	function whitelistStatus(address user) public view returns(bool)
-	{
+	function whitelistStatus(address user) public view returns(bool) {
 		return whitelist[user];
 	}
 
 
 	function _burn(
 		uint256 tokenId
-	) internal virtual override(ERC721,ERC721URIStorage)
-	{
+	) internal virtual override(ERC721,ERC721URIStorage) {
 		return ERC721URIStorage._burn(tokenId);
 	}
 
 
 	function tokenURI(
 		uint256 tokenId
-	) public view override(ERC721, ERC721URIStorage) returns (string memory)
-	{
+	) public view override(ERC721, ERC721URIStorage) returns (string memory) {
 		return ERC721URIStorage.tokenURI(tokenId);
 	}
 
@@ -214,16 +201,14 @@ contract diginaughts is
 		address from,
 		address to,
 		uint256 tokenId
-	) internal virtual override(ERC721, ERC721Enumerable)
-	{
+	) internal virtual override(ERC721, ERC721Enumerable) {
 		super._beforeTokenTransfer(from, to, tokenId);
 	}
 
 
 	function supportsInterface(
 		bytes4 interfaceId
-	) public view virtual override(AccessControlEnumerable, ERC721, ERC721Enumerable) returns (bool)
-	{
+	) public view virtual override(AccessControlEnumerable, ERC721, ERC721Enumerable) returns (bool) {
 		return super.supportsInterface(interfaceId);
 	}
 }
