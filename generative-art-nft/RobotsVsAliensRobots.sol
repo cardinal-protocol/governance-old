@@ -28,7 +28,7 @@ contract RobotsVsAliensRobots is
 
 
 	string private _baseTokenURI;
-	uint private _price;
+	uint private _mintPrice;
 	uint private _max;
 	address _wallet;
 	bool _openMint;
@@ -48,7 +48,7 @@ contract RobotsVsAliensRobots is
 		address admin
 	) ERC721(name, symbol) {
 		_baseTokenURI = baseTokenURI;
-		_price = mintPrice;
+		_mintPrice = mintPrice;
 		_max = max;
 		_wallet = wallet;
 		_openMint = false;
@@ -93,7 +93,7 @@ contract RobotsVsAliensRobots is
 
 
 	function setPrice(uint mintPrice) external onlyOwner {
-		_price = mintPrice;
+		_mintPrice = mintPrice;
 	}
 
 
@@ -103,14 +103,14 @@ contract RobotsVsAliensRobots is
 
 
 	function price() public view returns (uint) {
-		return _price;
+		return _mintPrice;
 	}
 
 
 	function mint(address[] memory toSend) public payable onlyOwner {
 		require(toSend.length <= 30, "Max of 30 NFTs per mint");
 		require(_openMint == true, "Minting closed");
-		require(msg.value == _price * toSend.length, "Invalid msg.value");
+		require(msg.value == _mintPrice * toSend.length, "Invalid msg.value");
 		require(_tokenIdTracker.current() + toSend.length <= _max, "Not enough NFTs left to be mint amount");
 
 		// For each address, mint the NFT
