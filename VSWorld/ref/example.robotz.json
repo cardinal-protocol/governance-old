@@ -4,6 +4,10 @@
 	"image": "",
 	"attributes": [
 		{
+			"trait_type": "Background",
+			"value": "standard"
+		},
+		{
 			"trait_type": "Primary Color",
 			"value": "Red"
 		},
