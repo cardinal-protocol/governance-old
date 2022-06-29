@@ -26,10 +26,10 @@ contract RobotsVsAliensRobots is
 
 
 	// init
+	address _treasury;
+	bool _openMint = false;	
 	string private _baseTokenURI;
 	uint private _mintPrice;
-	address _wallet;
-	bool _openMint;	
 
 
 	// init - const
@@ -45,24 +45,24 @@ contract RobotsVsAliensRobots is
 	constructor (
 		string memory name,
 		string memory symbol,
+		uint max,
 		string memory baseTokenURI,
 		uint mintPrice,
-		uint max,
-		address wallet,
+		address treasury,
 		address admin
 	) ERC721(name, symbol) {
+		MAX_ROBOTS = max;
+
 		_baseTokenURI = baseTokenURI;
 		_mintPrice = mintPrice;
-		MAX_ROBOTS = max;
-		_wallet = wallet;
-		_openMint = false;
+		_treasury = treasury;
 		
-		_setupRole(DEFAULT_ADMIN_ROLE, wallet);
+		_setupRole(DEFAULT_ADMIN_ROLE, treasury);
 		_setupRole(DEFAULT_ADMIN_ROLE, admin);
 	}
 
 
-	/* [OVERRIDE-REQUIRED-FUNCTIONS] */
+	/* [FUNCTIONS][OVERRIDE][REQUIRED] */
 	function _burn(uint256 tokenId) internal virtual override(ERC721, ERC721URIStorage) {
 		return ERC721URIStorage._burn(tokenId);
 	}
@@ -80,38 +80,36 @@ contract RobotsVsAliensRobots is
 	}
 
 
-	/* [FUNCTIONS] */
-	function setBaseURI(string memory baseURI) public onlyOwner {
-        _baseTokenURI = baseURI;
-    }
-
-
+	/* [FUNCTIONS][OVERRIDE] */
 	function _baseURI() internal view virtual override returns (string memory) {
 		return _baseTokenURI;
 	}
 
 
+	/* [FUNCTIONS][SELF-IMPLMENTATIONS] */
+	function setBaseURI(string memory baseTokenURI) public onlyOwner {
+        _baseTokenURI = baseTokenURI;
+    }
+
 	function setTokenURI(uint256 tokenId, string memory _tokenURI) external onlyOwner {
 		_setTokenURI(tokenId, _tokenURI);
 	}
 
-
-	function setPrice(uint mintPrice) external onlyOwner {
+	
+	/* [FUNCTIONS] */
+	function setMintPrice(uint mintPrice) external onlyOwner {
 		require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "!auth");
 
 		_mintPrice = mintPrice;
 	}
 
-
-	function setMint(bool openMint) external onlyOwner {
-		_openMint = openMint;
-	}
-
-
 	function price() public view returns (uint) {
 		return _mintPrice;
 	}
 
+	function setMint(bool state) external onlyOwner {
+		_openMint = state;
+	}
 
 	function mint(address[] memory toSend) public payable onlyOwner {
 		require(_openMint == true, "Minting closed");
@@ -130,6 +128,6 @@ contract RobotsVsAliensRobots is
 			}
 		}
 
-		payable(_wallet).transfer(msg.value);
+		payable(_treasury).transfer(msg.value);
 	}
 }
