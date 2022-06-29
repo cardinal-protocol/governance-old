@@ -46,8 +46,7 @@ contract VsWorldRobots is
 		uint max,
 		string memory baseTokenURI,
 		uint mintPrice,
-		address treasury,
-		address admin
+		address treasury
 	) ERC721(name, symbol) {
 		MAX_ROBOTS = max;
 
@@ -55,8 +54,8 @@ contract VsWorldRobots is
 		_mintPrice = mintPrice;
 		_treasury = treasury;
 		
+		_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 		_setupRole(DEFAULT_ADMIN_ROLE, treasury);
-		_setupRole(DEFAULT_ADMIN_ROLE, admin);
 	}
 
 
