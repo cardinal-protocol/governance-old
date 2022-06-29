@@ -28,13 +28,13 @@ contract RobotsVsAliensRobots is
 	// init
 	string private _baseTokenURI;
 	uint private _mintPrice;
-	uint private _max;
 	address _wallet;
-	bool _openMint;
+	bool _openMint;	
 
 
-	// init - mapping
-	mapping(address => bool) private whitelist;
+	// init - const
+	string public ROBOTS_VS_ALIENS_ROBOTS_PROVENANCE = "";
+	uint256 public MAX_ROBOTS;
 
 
 	// init - Custom Data Types
@@ -53,7 +53,7 @@ contract RobotsVsAliensRobots is
 	) ERC721(name, symbol) {
 		_baseTokenURI = baseTokenURI;
 		_mintPrice = mintPrice;
-		_max = max;
+		MAX_ROBOTS = max;
 		_wallet = wallet;
 		_openMint = false;
 		
@@ -80,10 +80,6 @@ contract RobotsVsAliensRobots is
 	}
 
 
-	/* [REQUIRED-FUNCTIONS] */
-	// Must implement access control utilties here
-
-
 	/* [FUNCTIONS] */
 	function setBaseURI(string memory baseURI) public onlyOwner {
         _baseTokenURI = baseURI;
@@ -101,6 +97,8 @@ contract RobotsVsAliensRobots is
 
 
 	function setPrice(uint mintPrice) external onlyOwner {
+		require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "!auth");
+
 		_mintPrice = mintPrice;
 	}
 
@@ -116,18 +114,20 @@ contract RobotsVsAliensRobots is
 
 
 	function mint(address[] memory toSend) public payable onlyOwner {
-		require(toSend.length <= 30, "Max of 30 NFTs per mint");
 		require(_openMint == true, "Minting closed");
+		require(toSend.length <= 20, "Can only mint 20 tokens at a time");
+		require(_tokenIdTracker.current() + toSend.length <= MAX_ROBOTS, "Purchase would exceed max supply");
 		require(msg.value == _mintPrice * toSend.length, "Invalid msg.value");
-		require(_tokenIdTracker.current() + toSend.length <= _max, "Not enough NFTs left to be mint amount");
 
 		// For each address, mint the NFT
-		for (uint i = 0; i < toSend.length; i++) {
-			// Mint token
-			_mint(toSend[i], _tokenIdTracker.current());
-
-			// Increment token id
-			_tokenIdTracker.increment();
+		for (uint i = 0; i < toSend.length; i++) {    
+			if (totalSupply() < MAX_ROBOTS) {
+				// Mint token
+				_mint(toSend[i], _tokenIdTracker.current());
+				
+				// Increment token id
+				_tokenIdTracker.increment();
+			}
 		}
 
 		payable(_wallet).transfer(msg.value);
