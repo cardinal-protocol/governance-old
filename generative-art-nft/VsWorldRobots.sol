@@ -15,7 +15,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 
 /* [MAIN-CONTRACT] */
-contract RobotsVsAliensRobots is
+contract VsWorldRobots is
 	AccessControlEnumerable,
 	ERC721Enumerable,
 	ERC721URIStorage,
