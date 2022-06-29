@@ -5,11 +5,10 @@ pragma solidity ^0.8.0;
 /* [IMPORT] */
 // access
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 // token
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 // utils
-import "@openzeppelin/contracts/utils/escrow/Escrow.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 
@@ -18,22 +17,21 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract VsWorldRobots is
 	AccessControlEnumerable,
 	ERC721Enumerable,
-	ERC721URIStorage,
-	Escrow
+	Ownable
 {
 	// using for
 	using Counters for Counters.Counter;
 
 
 	// init
-	address _treasury;
-	bool _openMint = false;	
-	string private _baseTokenURI;
-	uint private _mintPrice;
+	address public _treasury;
+	bool public _openMint = false;	
+	string public _baseTokenURI;
+	uint public _mintPrice;
 
 
 	// init - const
-	string public ROBOTS_VS_ALIENS_ROBOTS_PROVENANCE = "";
+	string public PROVENANCE = "";
 	uint256 public MAX_ROBOTS;
 
 
@@ -63,19 +61,19 @@ contract VsWorldRobots is
 
 
 	/* [FUNCTIONS][OVERRIDE][REQUIRED] */
-	function _burn(uint256 tokenId) internal virtual override(ERC721, ERC721URIStorage) {
-		return ERC721URIStorage._burn(tokenId);
+	function _burn(uint256 tokenId) internal virtual override(ERC721) {
+		return ERC721._burn(tokenId);
 	}
 
-	function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
-		return ERC721URIStorage.tokenURI(tokenId);
+	function tokenURI(uint256 tokenId) public view override(ERC721) returns (string memory) {
+		return ERC721.tokenURI(tokenId);
 	}
 
-	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override(ERC721, ERC721Enumerable) {
+	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override {
 		super._beforeTokenTransfer(from, to, tokenId);
 	}
 
-	function supportsInterface(bytes4 interfaceId) public view virtual override(AccessControlEnumerable, ERC721, ERC721Enumerable) returns (bool) {
+	function supportsInterface(bytes4 interfaceId) public view virtual override(AccessControlEnumerable, ERC721Enumerable) returns (bool) {
 		return super.supportsInterface(interfaceId);
 	}
 
@@ -87,25 +85,40 @@ contract VsWorldRobots is
 
 
 	/* [FUNCTIONS][SELF-IMPLMENTATIONS] */
-	function setBaseURI(string memory baseTokenURI) public onlyOwner {
+	function setBaseURI(string memory baseTokenURI) external onlyOwner {
         _baseTokenURI = baseTokenURI;
     }
 
-	function setTokenURI(uint256 tokenId, string memory _tokenURI) external onlyOwner {
-		_setTokenURI(tokenId, _tokenURI);
-	}
-
 	
 	/* [FUNCTIONS] */
-	function setMintPrice(uint mintPrice) external onlyOwner {
-		require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "!auth");
+	function withdrawToTreasury() public onlyOwner {
+        uint balance = address(this).balance;
+        
+		payable(_treasury).transfer(balance);
+    }
 
+	function setProvenanceHash(string memory provenanceHash) public onlyOwner {
+        PROVENANCE = provenanceHash;
+    }
+
+	function setMintPrice(uint mintPrice) public onlyOwner {
 		_mintPrice = mintPrice;
 	}
 
 	function price() public view returns (uint) {
 		return _mintPrice;
 	}
+
+    function reserveTokens() public onlyOwner {        
+        for (uint i = 0; i < 30; i++) {
+			if (totalSupply() < MAX_ROBOTS) {
+				_mint(_treasury, _tokenIdTracker.current());
+
+				// Increment token id
+				_tokenIdTracker.increment();
+			}
+        }
+    }
 
 	function setMint(bool state) external onlyOwner {
 		_openMint = state;
