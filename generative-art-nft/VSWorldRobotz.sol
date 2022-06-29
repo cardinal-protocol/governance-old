@@ -14,7 +14,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 
 /* [MAIN-CONTRACT] */
-contract VsWorldRobots is
+contract VSWorldRobotz is
 	AccessControlEnumerable,
 	ERC721Enumerable,
 	Ownable
