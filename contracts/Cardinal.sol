@@ -1,35 +1,36 @@
-// contracts/CARDToken.sol
+// contracts/CardinalToken.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
 
-// [IMPORT]
+/* ========== [IMPORTS] ========== */
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
 
-contract CARDToken is ERC20Capped, Pausable {
-    // [USING-FORS]
-    using SafeERC20 for CARDToken;
-    
+contract Cardinal is ERC20Capped, Pausable {
+    /* ========== [DEPENDENCIES] ========== */
 
-    // [EVENTS]
+    using SafeERC20 for Cardinal;
+
+    /* ========== [EVENTS] ========== */
+
     event SupplyAmountSet(uint amount, address byOwner);
-    
 
-    // [VARIABLES]
+    /* ========== [STATE VARIABLES] ========== */
+
     address operator;
 
+    /* ========== [STATE VARIABLES Maps] ========== */
 
-    // [VARIABLES][MAPS]
     mapping(address => bool) pausers;
     
+    /* ========== [CONSTRUCTOR] ========== */
 
-    // [CONSTRUCTOR]
     constructor ()
         // Token Name and Symbol
-        ERC20("Cardinal Token", "CARD")
+        ERC20("Cardinal", "CARD")
         // 100 Million Supply Cap 
         ERC20Capped(100 * 1000000 * 1e18)
     {
@@ -37,8 +38,8 @@ contract CARDToken is ERC20Capped, Pausable {
         pausers[msg.sender] = true;
     }
     
-    
-    // [MODIFIERS]
+    /* ========== [MODIFIERS] ========== */
+
     modifier operatorOnly() { 
         require(msg.sender == operator, "!authorized");
 
@@ -52,7 +53,8 @@ contract CARDToken is ERC20Capped, Pausable {
     }
 
 
-    // [FUNCTIONS][MINT]
+    /* ========== [MUTATIVE FUNCTIONS] ========== */
+
     function mint(
         address _to,
         uint256 _amount
@@ -61,8 +63,6 @@ contract CARDToken is ERC20Capped, Pausable {
         super._mint(_to, _amount);
     }
     
-
-    // [FUNCTIONS][PAUSE]
     function setAsPauser(address[] memory addresses) public operatorOnly() {
         for (uint i = 0; i < addresses.length; ++i) {
             pausers[addresses[i]] = true;
