@@ -2,31 +2,29 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
+/* ========== IMPORTS ========== */
 
-/* ========== [IMPORTS] ========== */
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
 
 contract Cardinal is ERC20Capped, Pausable {
-    /* ========== [DEPENDENCIES] ========== */
+    /* ========== DEPENDENCIES ========== */
 
     using SafeERC20 for Cardinal;
 
-    /* ========== [EVENTS] ========== */
+    /* ========== EVENTS ========== */
 
     event SupplyAmountSet(uint amount, address byOwner);
 
-    /* ========== [STATE VARIABLES] ========== */
+    /* ========== STATE VARIABLES ========== */
 
     address operator;
 
-    /* ========== [STATE VARIABLES Maps] ========== */
-
     mapping(address => bool) pausers;
     
-    /* ========== [CONSTRUCTOR] ========== */
+    /* ========== CONSTRUCTOR ========== */
 
     constructor ()
         // Token Name and Symbol
@@ -38,7 +36,7 @@ contract Cardinal is ERC20Capped, Pausable {
         pausers[msg.sender] = true;
     }
     
-    /* ========== [MODIFIERS] ========== */
+    /* ========== MODIFIERS ========== */
 
     modifier operatorOnly() { 
         require(msg.sender == operator, "!authorized");
@@ -53,7 +51,7 @@ contract Cardinal is ERC20Capped, Pausable {
     }
 
 
-    /* ========== [MUTATIVE FUNCTIONS] ========== */
+    /* ========== MUTATIVE FUNCTIONS ========== */
 
     function mint(
         address _to,
