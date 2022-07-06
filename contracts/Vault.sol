@@ -7,11 +7,17 @@ contract Vault {
 	
 	mapping(uint => bool) public active;
 
-    /* ========== MUTATIVE FUNCTIONS ========== */
-	
-	function deposit(uint strategyId, uint256 _amount) public {
+    /* ========== MODIFIERS ========== */
+
+	modifier isNotShutDown(uint strategyId) {
 		require(active[strategyId], "Strategy is not active");
 
+		_;
+	}
+
+    /* ========== MUTATIVE FUNCTIONS ========== */
+	
+	function deposit(uint strategyId, uint256 _amount) public isNotShutDown(strategyId) {
 		
 	}
 }
