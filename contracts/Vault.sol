@@ -17,7 +17,10 @@ contract Vault {
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 	
-	function deposit(uint strategyId, uint256 _amount) public isNotShutDown(strategyId) {
+	function deposit(
+		uint strategyId,
+		uint _amount
+	) public isNotShutDown(strategyId) {
 		
 	}
 }
