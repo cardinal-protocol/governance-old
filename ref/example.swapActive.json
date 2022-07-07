@@ -10,11 +10,13 @@
 		"0xAddressA": 1,
 		"0xAddressB": 2
 	},
+
 	"swap": {
 		"0xAddressA": {
 			"token": "TOKEN A",
 			"percentage": 0.5
 		},
+
 		"0xAddressB": {
 			"token": "TOKEN B",
 			"percentage": 0.5
