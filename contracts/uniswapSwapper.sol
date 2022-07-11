@@ -102,6 +102,6 @@ contract tokenSwap {
 			UNISWAP_V2_ROUTER
 		).getAmountsOut(_amountIn, path);
 
-		return amountOutMins[path.length -1];  
+		return amountOutMins[path.length - 1];  
 	}
 }
