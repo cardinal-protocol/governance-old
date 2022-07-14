@@ -9,10 +9,10 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
 
-contract CardinalFinance is ERC20Capped, Pausable {
+contract CardinalProtocol is ERC20Capped, Pausable {
     /* ========== DEPENDENCIES ========== */
 
-    using SafeERC20 for CardinalFinance;
+    using SafeERC20 for CardinalProtocol;
 
     /* ========== EVENTS ========== */
 
@@ -28,7 +28,7 @@ contract CardinalFinance is ERC20Capped, Pausable {
 
     constructor ()
         // Token Name and Symbol
-        ERC20("Cardinal", "CARD")
+        ERC20("Cardinal Protocol", "CARD")
         // 100 Million Supply Cap 
         ERC20Capped(100 * 1000000 * 1e18)
     {
