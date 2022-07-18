@@ -3,7 +3,8 @@
 pragma solidity ^0.8.9;
 
 
-/* [IMPORT] */
+/* ========== [IMPORT] ========== */
+
 // access
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -33,6 +34,7 @@ contract AssetAllocators is
 
 	Counters.Counter public _tokenIdTracker;
 
+	address public _treasury;
 	string public _baseTokenURI;
 
 	mapping(uint => Guideline) guidelines;
@@ -46,6 +48,8 @@ contract AssetAllocators is
 		address treasury
 	) ERC721(name, symbol) {
 		_baseTokenURI = baseTokenURI;
+		_treasury = treasury;
+
 
 		_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 	}
@@ -108,5 +112,21 @@ contract AssetAllocators is
 			// Increment token id
 			_tokenIdTracker.increment();
 		}
+	}
+
+	// To forward any erc20s from this contract, an array of erc20 token addresses
+	// will need to be passed
+	function depositIntoStrategies(address[] memory tokenAddresses) {
+		for (uint256 i = 0; i < tokenAddresses.length; i++) {
+			
+		}
+	}
+
+    /* ========== [FUNCTION][OTHER] ========== */
+
+	function withdrawToTreasury() public onlyOwner {
+		uint balance = address(this).balance;
+		
+		payable(_treasury).transfer(balance);
 	}
 }
