@@ -116,9 +116,9 @@ contract AssetAllocators is
 
 	// To forward any erc20s from this contract, an array of erc20 token addresses
 	// will need to be passed
-	function depositIntoStrategies(address[] memory tokenAddresses) {
+	function forwardToStrategies(address[] memory tokenAddresses) {
 		for (uint256 i = 0; i < tokenAddresses.length; i++) {
-			
+			// Transfer tokens to strategies
 		}
 	}
 
