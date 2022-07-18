@@ -1,6 +1,6 @@
 // contracts/CardinalTreasury.sol
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.9;
 
 
 /* [IMPORT] */
@@ -18,27 +18,27 @@ contract AssetAllocators is
 	ERC721Enumerable,
 	Ownable
 {
+	/* ========== [STRUCTS & STATE VARIABLES] ========== */
 
-	/* ========== STRUCTS ========== */
-
-	struct AssetAllocators {
-		string whitelistedLPTokens;
-		mapping(string => int) allocations;
+	struct StrategyAllocation {
+		uint id;
+		uint pct;
 	}
 
-	/* ========== STATE VARIABLES ========== */
+	mapping(int => StrategyAllocation) strategyAllocations;
 
-	address public _treasury;
-	string public _baseTokenURI;
-	
-	mapping(int => string) whitelistedLPTokens;
+	struct Guideline {
+		uint[] strategyAllocationIds;
+	}
 
-	mapping(int => AssetAllocators) assetAllocators;
-
-	// init - Custom Data Types
 	Counters.Counter public _tokenIdTracker;
 
-	/* ========== CONTRUCTOR ========== */
+	string public _baseTokenURI;
+
+	mapping(uint => Guideline) guidelines;
+
+	/* ========== [CONTRUCTOR] ========== */
+
 	constructor (
 		string memory name,
 		string memory symbol,
@@ -46,19 +46,17 @@ contract AssetAllocators is
 		address treasury
 	) ERC721(name, symbol) {
 		_baseTokenURI = baseTokenURI;
-		_treasury = treasury;
 
 		_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-		_setupRole(DEFAULT_ADMIN_ROLE, treasury);
 	}
 	
-    /* ========== MODIFIERS ========== */
+    /* ========== [MODIFIERS] ========== */
 
 	modifier mintCompliance(address[] memory toSend) {
 		_;
 	}
 
-    /* ========== FUNCTION OVERRIDE REQUIRED ========== */
+    /* ========== [FUNCTION][OVERRIDE][REQUIRED] ========== */
 	
 	function _burn(uint256 tokenId) internal virtual override(ERC721) {
 		
@@ -87,19 +85,19 @@ contract AssetAllocators is
 		return super.supportsInterface(interfaceId);
 	}
 
-    /* ========== FUNCTION OVERRIDE ========== */
+    /* ========== [FUNCTION][OVERRIDE] ========== */
 
 	function _baseURI() internal view virtual override returns (string memory) {
 		return _baseTokenURI;
 	}
 
-    /* ========== FUNCTION SELF-IMPLEMENTATIONS ========== */
+    /* ========== [FUNCTION][SELF-IMPLEMENTATIONS] ========== */
 
 	function setBaseURI(string memory baseTokenURI) external onlyOwner {
 		_baseTokenURI = baseTokenURI;
 	}
 
-    /* ========== FUNCTION ========== */
+    /* ========== [FUNCTION] ========== */
 
 	function mint(address[] memory toSend) public mintCompliance(toSend) {
 		// For each address, mint the NFT
@@ -110,11 +108,5 @@ contract AssetAllocators is
 			// Increment token id
 			_tokenIdTracker.increment();
 		}
-	}
-
-	function withdrawToTreasury() public onlyOwner {
-		uint balance = address(this).balance;
-		
-		payable(_treasury).transfer(balance);
 	}
 }
