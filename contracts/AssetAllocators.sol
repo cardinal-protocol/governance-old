@@ -19,26 +19,31 @@ contract AssetAllocators is
 	ERC721Enumerable,
 	Ownable
 {
-	/* ========== [STRUCTS & STATE VARIABLES] ========== */
+	/* ========== [STRUCTS + MAPPINGS] ========== */
 
 	struct StrategyAllocation {
 		uint id;
 		uint pct;
 	}
 
-	mapping(int => StrategyAllocation) strategyAllocations;
+	mapping(uint => StrategyAllocation) strategyAllocations;
 
 	struct Guideline {
 		uint[] strategyAllocationIds;
 	}
 
+	mapping(uint => Guideline) guidelines;
+
+	/* ========== [STATE VARIABLES] ========== */
+
+	// Custom Types
 	Counters.Counter public _tokenIdTracker;
 
-	address public _assetManagerContract;
-	address public _treasury;
+	// init
 	string public _baseTokenURI;
+	address public _treasury;
 
-	mapping(uint => Guideline) guidelines;
+	mapping(uint => address) strategyAddresses;
 
 	/* ========== [CONTRUCTOR] ========== */
 
@@ -46,13 +51,10 @@ contract AssetAllocators is
 		string memory name,
 		string memory symbol,
 		string memory baseTokenURI,
-		address assetManagerContract,
 		address treasury
 	) ERC721(name, symbol) {
 		_baseTokenURI = baseTokenURI;
-		_assetManagerContract = assetManagerContract;
 		_treasury = treasury;
-
 
 		_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 	}
@@ -129,15 +131,16 @@ contract AssetAllocators is
 			"You do not own this AssetAllocator token"
 		);
 
-		// Retrieve guideline
+		// Retrieve Guideline
 		Guideline g = guidelines[assetAllocatorId];
 
-		// For each strategyAllocationId
-		for (uint256 i = 0; i < g.strategyAllocationIds.length; i++) {
-			uint sId = g.strategyAllocationIds[i];
+		// For each Strategy Allocation Id
+		for (uint i = 0; i < g.strategyAllocationIds.length; i++) {
+			
+			uint sAId = g.strategyAllocationIds[i];
 
-			// Get strategie allocation
-			uint s = strategyAllocations[sId];
+			// Retrieve Strategy Allocation
+			uint sA = strategyAllocations[sAId];
 
 
 		}
