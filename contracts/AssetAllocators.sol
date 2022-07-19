@@ -34,6 +34,7 @@ contract AssetAllocators is
 
 	Counters.Counter public _tokenIdTracker;
 
+	address public _assetManagerContract;
 	address public _treasury;
 	string public _baseTokenURI;
 
@@ -45,9 +46,11 @@ contract AssetAllocators is
 		string memory name,
 		string memory symbol,
 		string memory baseTokenURI,
+		address assetManagerContract,
 		address treasury
 	) ERC721(name, symbol) {
 		_baseTokenURI = baseTokenURI;
+		_assetManagerContract = assetManagerContract;
 		_treasury = treasury;
 
 
@@ -116,9 +119,27 @@ contract AssetAllocators is
 
 	// To forward any erc20s from this contract, an array of erc20 token addresses
 	// will need to be passed
-	function forwardToStrategies(address[] memory tokenAddresses) {
-		for (uint256 i = 0; i < tokenAddresses.length; i++) {
-			// Transfer tokens to strategies
+	function depositTokensIntoStrategies(
+		uint assetAllocatorId,
+		uint[] amounts
+	) {
+		// Check if the wallet owns the assetAllocatorId
+		require(
+			_owners[assetAllocatorId] == msg.sender,
+			"You do not own this AssetAllocator token"
+		);
+
+		// Retrieve guideline
+		Guideline g = guidelines[assetAllocatorId];
+
+		// For each strategyAllocationId
+		for (uint256 i = 0; i < g.strategyAllocationIds.length; i++) {
+			uint sId = g.strategyAllocationIds[i];
+
+			// Get strategie allocation
+			uint s = strategyAllocations[sId];
+
+
 		}
 	}
 
