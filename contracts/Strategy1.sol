@@ -21,6 +21,7 @@ contract Strategy1 {
     /* ========== MODIFIERS ========== */
 
 	modifier authorized() {
+		// Require that the caller can only by the AssetAllocators Contract
 		require(msg.sender == AssetAllocators, "!auth");
 
 		_;
@@ -34,9 +35,9 @@ contract Strategy1 {
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 	
-	function deposit(uint[] memory _amounts) public authorized() isActive() {
-		// Require that the caller can only by the AssetAllocators Contract
-
+	function deposit(address behalfOf, uint[] memory _amounts) public authorized() isActive() {
+		// This is where the tokens are deposited into the external DeFi Protocol.
+		
 	}
 
     /* ========== VIEW FUNCTIONS ========== */
