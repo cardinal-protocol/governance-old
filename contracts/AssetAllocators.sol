@@ -124,7 +124,7 @@ contract AssetAllocators is
 	function depositTokensIntoStrategies(
 		uint assetAllocatorId,
 		uint[] amounts
-	) {
+	) public {
 		// Check if the wallet owns the assetAllocatorId
 		require(
 			_owners[assetAllocatorId] == msg.sender,
@@ -142,7 +142,9 @@ contract AssetAllocators is
 			// Retrieve Strategy Allocation
 			uint sA = strategyAllocations[sAId];
 
+			// Retrieve address of strategy
 
+			// run deposit function in strategy using interface and address
 		}
 	}
 
