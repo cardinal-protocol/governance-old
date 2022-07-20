@@ -38,8 +38,8 @@ contract AssetAllocators is
 	string public _baseTokenURI;
 	address public _treasury;
 
-	mapping(uint64 => address) whitelistedStrategyAddresses;
-	mapping(uint64 => Guideline) guidelines;
+	mapping(uint64 => address) _whitelistedStrategyAddresses;
+	mapping(uint64 => Guideline) _guidelines;
 
 
 	/* ========== [CONTRUCTOR] ========== */
@@ -57,14 +57,14 @@ contract AssetAllocators is
 	}
 
 	
-    /* ========== [MODIFIERS] ========== */
+	/* ========== [MODIFIERS] ========== */
 
-	modifier mintCompliance(address[] memory toSend) {
+	modifier mintCompliance() {
 		_;
 	}
 
 
-    /* ========== [FUNCTION][OVERRIDE][REQUIRED] ========== */
+	/* ========== [FUNCTION][OVERRIDE][REQUIRED] ========== */
 	
 	function _burn(uint256 tokenId) internal virtual override(ERC721) {
 		
@@ -94,27 +94,35 @@ contract AssetAllocators is
 	}
 
 
-    /* ========== [FUNCTION][OVERRIDE] ========== */
+	/* ========== [FUNCTION][OVERRIDE] ========== */
 
 	function _baseURI() internal view virtual override returns (string memory) {
 		return _baseTokenURI;
 	}
 
 
-    /* ========== [FUNCTION][SELF-IMPLEMENTATIONS] ========== */
+	/* ========== [FUNCTION][SELF-IMPLEMENTATIONS] ========== */
 
 	function setBaseURI(string memory baseTokenURI) external onlyOwner {
 		_baseTokenURI = baseTokenURI;
 	}
 
 
-    /* ========== [FUNCTION] ========== */
+	/* ========== [FUNCTION] ========== */
 
-	function mint(address[] memory toSend) public mintCompliance(toSend) {
-		// For each address, mint the NFT
+	function mint(
+		address[] memory toSend,
+		Guideline guideline
+	) public
+		mintCompliance()
+	{
+		// For each toSend, mint the NFT
 		for (uint i = 0; i < toSend.length; i++) {
 			// Mint token
 			_mint(toSend[i], _tokenIdTracker.current());
+
+			// Add Guideline
+			_guidelines[_tokenIdTracker.current()] = guideline;
 			
 			// Increment token id
 			_tokenIdTracker.increment();
@@ -143,7 +151,7 @@ contract AssetAllocators is
 	}
 
 
-    /* ========== [FUNCTION][OTHER] ========== */
+	/* ========== [FUNCTION][OTHER] ========== */
 
 	function withdrawToTreasury() public onlyOwner {
 		uint balance = address(this).balance;
