@@ -5,7 +5,7 @@ pragma solidity ^0.8.9;
 contract StrategyX {
 	/* ========== [STATE-VARIABLES][IMMUTABLE] ========== */
 
-	string public constant NAME = 'StrategyX - ';
+	string public _name;
 
 
 	/* ========== [STATE-VARIABLES][AUTH] ========== */
@@ -20,19 +20,18 @@ contract StrategyX {
 	
 	bool public active = false;
 
-	address[] public _tokensUsed = [
-		address(0x6B175474E89094C44Da98b954EedeAC495271d0F),
-		address(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48)
-	];
+	address[] public _tokensUsed;
 
 	mapping(address => uint) balanceOf;
 
 	/* ========== [CONSTRUCTOR] ========== */
 
 	constructor (
+		string memory name,
 		address admin,
 		address keeper
 	) {
+		_name = name;
 		_admin = admin;
 		_keeper = keeper;
 	}
