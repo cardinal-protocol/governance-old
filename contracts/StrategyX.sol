@@ -1,16 +1,17 @@
-// contracts/CardinalTreasury.sol
+// contracts/StrategyX.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-contract Strategy1 {
-	/* ========== [STATE VARIABLES][AUTH] ========== */
+contract StrategyX {
+	/* ========== [STATE-VARIABLES][AUTH] ========== */
 
 	address _admin;
 	address _keeper;
 
 	address _assetAllocators;
 
-	/* ========== [STATE VARIABLES] ========== */
+
+	/* ========== [STATE-VARIABLES] ========== */
 	
 	string _name = 'UNISWAP V2 DAI-USDC';
 	bool active = false;
@@ -18,6 +19,7 @@ contract Strategy1 {
 		0x6B175474E89094C44Da98b954EedeAC495271d0F,
 		0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
 	];
+
 
 	/* ========== [CONSTRUCTOR] ========== */
 
@@ -28,6 +30,7 @@ contract Strategy1 {
 		_admin = admin;
 		_keeper = keeper;
 	}
+
 
 	/* ========== [MODIFIERS] ========== */
 
@@ -58,7 +61,8 @@ contract Strategy1 {
 		_;
 	}
 
-	/* ========== [MUTATIVE FUNCTIONS] ========== */
+
+	/* ========== [FUNCTIONS][MUTATIVE] ========== */
 
 	function set_assetAllocator(address assetAllocators) public auth_admin() {
 		// Bestow the honor..
@@ -81,7 +85,8 @@ contract Strategy1 {
 		// This is where the tokens are deposited into the external DeFi Protocol.
 	}
 
-	/* ========== [NON-MUTATIVE FUNCTIONS] ========== */
+
+	/* ========== [FUNCTIONS][NON-MUTATIVE] ========== */
 
 	function tokensUsed() public view returns (address[] memory) {
 		return _tokensUsed;
