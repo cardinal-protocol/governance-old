@@ -3,25 +3,29 @@
 pragma solidity ^0.8.9;
 
 contract StrategyX {
+	/* ========== [STATE-VARIABLES][IMMUTABLE] ========== */
+
+	string public constant NAME = 'StrategyX - ';
+
+
 	/* ========== [STATE-VARIABLES][AUTH] ========== */
 
-	address _admin;
-	address _keeper;
+	address public _admin;
+	address public _keeper;
 
-	address _assetAllocators;
+	address public _assetAllocators;
 
 
 	/* ========== [STATE-VARIABLES] ========== */
 	
-	string _name = 'StrategyX - UniswapV2 DAI-USDC';
-	
-	bool active = false;
+	bool public active = false;
 
-	address[] _tokensUsed = [
-		0x6B175474E89094C44Da98b954EedeAC495271d0F,
-		0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
+	address[] public _tokensUsed = [
+		address(0x6B175474E89094C44Da98b954EedeAC495271d0F),
+		address(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48)
 	];
 
+	mapping(address => uint) balanceOf;
 
 	/* ========== [CONSTRUCTOR] ========== */
 
@@ -65,6 +69,11 @@ contract StrategyX {
 
 
 	/* ========== [FUNCTIONS][MUTATIVE] ========== */
+
+	function set_admin(address admin) public auth_admin() {
+		// Bestow the honor..
+		_admin = admin;
+	}
 
 	function set_assetAllocator(address assetAllocators) public auth_admin() {
 		// Bestow the honor..

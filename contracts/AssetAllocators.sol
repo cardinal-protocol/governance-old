@@ -1,4 +1,4 @@
-// contracts/CardinalTreasury.sol
+// contracts/AssetAllocator.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
@@ -19,31 +19,28 @@ contract AssetAllocators is
 	ERC721Enumerable,
 	Ownable
 {
-	/* ========== [STRUCTS + MAPPINGS] ========== */
+	/* ========== [STRUCTS] ========== */
 
 	struct StrategyAllocation {
-		uint id;
-		uint pct;
+		uint64 id;
+		uint64 pct;
 	}
-
-	mapping(uint => StrategyAllocation) strategyAllocations;
 
 	struct Guideline {
-		uint[] strategyAllocationIds;
+		StrategyAllocation[] strategyAllocations;
 	}
-
-	mapping(uint => Guideline) guidelines;
 
 	/* ========== [STATE VARIABLES] ========== */
 
 	// Custom Types
 	Counters.Counter public _tokenIdTracker;
 
-	// init
 	string public _baseTokenURI;
 	address public _treasury;
 
-	mapping(uint => address) strategyAddresses;
+	mapping(uint64 => address) whitelistedStrategyAddresses;
+	mapping(uint64 => Guideline) guidelines;
+
 
 	/* ========== [CONTRUCTOR] ========== */
 
@@ -58,12 +55,14 @@ contract AssetAllocators is
 
 		_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 	}
+
 	
     /* ========== [MODIFIERS] ========== */
 
 	modifier mintCompliance(address[] memory toSend) {
 		_;
 	}
+
 
     /* ========== [FUNCTION][OVERRIDE][REQUIRED] ========== */
 	
@@ -94,17 +93,20 @@ contract AssetAllocators is
 		return super.supportsInterface(interfaceId);
 	}
 
+
     /* ========== [FUNCTION][OVERRIDE] ========== */
 
 	function _baseURI() internal view virtual override returns (string memory) {
 		return _baseTokenURI;
 	}
 
+
     /* ========== [FUNCTION][SELF-IMPLEMENTATIONS] ========== */
 
 	function setBaseURI(string memory baseTokenURI) external onlyOwner {
 		_baseTokenURI = baseTokenURI;
 	}
+
 
     /* ========== [FUNCTION] ========== */
 
@@ -122,31 +124,24 @@ contract AssetAllocators is
 	// To forward any erc20s from this contract, an array of erc20 token addresses
 	// will need to be passed
 	function depositTokensIntoStrategies(
-		uint assetAllocatorId,
+		uint tokenId,
 		uint[] amounts
 	) public {
 		// Check if the wallet owns the assetAllocatorId
 		require(
-			_owners[assetAllocatorId] == msg.sender,
+			_owners[tokenId] == msg.sender,
 			"You do not own this AssetAllocator token"
 		);
 
 		// Retrieve Guideline
-		Guideline g = guidelines[assetAllocatorId];
+		Guideline tokenGuideLine = guidelines[tokenId];
 
 		// For each Strategy Allocation Id
-		for (uint i = 0; i < g.strategyAllocationIds.length; i++) {
+		for (uint i = 0; i < tokenGuideLine.strategyAllocations.length; i++) {
 			
-			uint sAId = g.strategyAllocationIds[i];
-
-			// Retrieve Strategy Allocation
-			uint sA = strategyAllocations[sAId];
-
-			// Retrieve address of strategy
-
-			// run deposit function in strategy using interface and address
 		}
 	}
+
 
     /* ========== [FUNCTION][OTHER] ========== */
 
