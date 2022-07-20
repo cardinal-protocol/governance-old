@@ -28,7 +28,7 @@ contract CardinalProtocol is ERC20Capped, Pausable {
 
     constructor ()
         // Token Name and Symbol
-        ERC20("Cardinal Protocol", "CARD")
+        ERC20("Cardinal Protocol", "CRDP")
         // 100 Million Supply Cap 
         ERC20Capped(100 * 1000000 * 1e18)
     {

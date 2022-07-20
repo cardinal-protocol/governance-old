@@ -45,11 +45,9 @@ contract AssetAllocators is
 	/* ========== [CONTRUCTOR] ========== */
 
 	constructor (
-		string memory name,
-		string memory symbol,
 		string memory baseTokenURI,
 		address treasury
-	) ERC721(name, symbol) {
+	) ERC721("Asset Allocators", "ASSTALLCTR") {
 		_baseTokenURI = baseTokenURI;
 		_treasury = treasury;
 
@@ -132,19 +130,19 @@ contract AssetAllocators is
 	// To forward any erc20s from this contract, an array of erc20 token addresses
 	// will need to be passed
 	function depositTokensIntoStrategies(
-		uint tokenId,
+		uint AssetAllocatorTokenId,
 		uint[] amounts
 	) public {
 		// Check if the wallet owns the assetAllocatorId
 		require(
-			_owners[tokenId] == msg.sender,
+			_owners[AssetAllocatorTokenId] == msg.sender,
 			"You do not own this AssetAllocator token"
 		);
 
 		// Retrieve Guideline
-		Guideline tokenGuideLine = guidelines[tokenId];
+		Guideline tokenGuideLine = guidelines[AssetAllocatorTokenId];
 
-		// For each Strategy Allocation Id
+		// For each Strategy Allocation
 		for (uint i = 0; i < tokenGuideLine.strategyAllocations.length; i++) {
 			
 		}
