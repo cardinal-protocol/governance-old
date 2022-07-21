@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-contract Strategy {
+abstract contract Strategy {
 	/* ========== [STATE-VARIABLES][AUTH] ========== */
 
 	address public _admin;
@@ -18,8 +18,9 @@ contract Strategy {
 
 	bool public _active = false;
 
-	mapping(address => uint) _depositedBalances;
-	mapping(address => uint) _deployedBalances;
+	mapping(address => uint64) _deployedBalances;
+	mapping(address => uint64) _depositedBalances;
+	mapping(address => uint64) _withdrawalRequests;
 
 
 	/* ========== [CONSTRUCTOR] ========== */
@@ -113,12 +114,24 @@ contract Strategy {
 	/*
 	* Asset Allocator
 	*/
-	function update_depositedBalances(address behalfOf, uint[] memory amounts) public
+	function update_depositedBalances(
+		uint64 assetAllocatorTokenId,
+		uint64[] memory amounts
+	) public
 		virtual
 		auth_assetAllocator()
 		active()
 	{
 		// This is where the tokens are deposited into the external DeFi Protocol.
+	}
+
+	function update_withdrawalRequests(
+		uint64 assetAllocatorTokenId,
+		uint64[] memory amounts
+	) public
+		auth_assetAllocator()
+	{
+
 	}
 
 
@@ -130,4 +143,7 @@ contract Strategy {
 	{
 		return _tokensUsed;
 	}
+
+
+	/* ========== [FUNCTIONS-VIRTUAL] ========== */
 }
