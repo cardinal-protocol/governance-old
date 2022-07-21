@@ -89,17 +89,24 @@ contract Strategy {
 	/*
 	* Admin || Keeper
 	*/
-	function set_name(string memory name_) public auth_adminOrKepper() {
+	function set_name(string memory name_) public
+		virtual
+		auth_adminOrKepper()
+	{
 		_name = name_;
 	}
 
 	function set_tokensUsed(address[] memory tokensUsed_) public
+		virtual
 		auth_adminOrKepper()
 	{
 		_tokensUsed = tokensUsed_;
 	}
 
-	function toggleActive() public auth_adminOrKepper() {
+	function toggleActive() public
+		virtual
+		auth_adminOrKepper()
+	{
 		_active = !_active;
 	}
 
@@ -107,6 +114,7 @@ contract Strategy {
 	* Asset Allocator
 	*/
 	function update_depositedBalances(address behalfOf, uint[] memory amounts) public
+		virtual
 		auth_assetAllocator()
 		active()
 	{
@@ -116,7 +124,10 @@ contract Strategy {
 
 	/* ========== [FUNCTIONS][NON-MUTATIVE] ========== */
 
-	function tokensUsed() public view returns (address[] memory) {
+	function tokensUsed() public view
+		virtual
+		returns (address[] memory)
+	{
 		return _tokensUsed;
 	}
 }
