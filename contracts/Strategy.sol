@@ -12,7 +12,6 @@ contract StrategyX {
 
 	address public _admin;
 	address public _keeper;
-
 	address public _assetAllocators;
 
 
@@ -22,7 +21,9 @@ contract StrategyX {
 
 	address[] public _tokensUsed;
 
-	mapping(address => uint) balanceOf;
+	mapping(address => uint) _depositedBalances;
+	mapping(address => uint) _deployedBalances;
+
 
 	/* ========== [CONSTRUCTOR] ========== */
 
@@ -88,7 +89,7 @@ contract StrategyX {
 		active = !active;
 	}
 
-	function updateDeposits(address behalfOf, uint[] memory _amounts) public
+	function update_depositedBalances(address behalfOf, uint[] memory amounts) public
 		only_assetAllocator()
 		isActive()
 	{
