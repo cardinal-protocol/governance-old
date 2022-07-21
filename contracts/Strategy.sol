@@ -1,13 +1,8 @@
-// contracts/StrategyX.sol
+// contracts/Strategy.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-contract StrategyX {
-	/* ========== [STATE-VARIABLES][IMMUTABLE] ========== */
-
-	string public _name;
-
-
+contract Strategy {
 	/* ========== [STATE-VARIABLES][AUTH] ========== */
 
 	address public _admin;
@@ -17,9 +12,11 @@ contract StrategyX {
 
 	/* ========== [STATE-VARIABLES] ========== */
 	
-	bool public active = false;
+	string public _name;
 
 	address[] public _tokensUsed;
+
+	bool public _active = false;
 
 	mapping(address => uint) _depositedBalances;
 	mapping(address => uint) _deployedBalances;
@@ -28,13 +25,17 @@ contract StrategyX {
 	/* ========== [CONSTRUCTOR] ========== */
 
 	constructor (
-		string memory name,
-		address admin,
-		address keeper
+		address admin_,
+		address keeper_,
+		string memory name_,
+		address[] memory tokensUsed_
 	) {
-		_name = name;
-		_admin = admin;
-		_keeper = keeper;
+		_admin = admin_;
+		_keeper = keeper_;
+
+		_name = name_;
+		_tokensUsed = tokensUsed_;
+
 	}
 
 
@@ -47,22 +48,22 @@ contract StrategyX {
 		_;
 	}
 
-	modifier auth_keeper() {
+	modifier auth_adminOrKepper() {
 		// Require that the caller can only by the AssetAllocators Contract
 		require(msg.sender == _keeper || msg.sender == _admin, "!auth");
 
 		_;
 	}
 
-	modifier only_assetAllocator() {
+	modifier auth_assetAllocator() {
 		// Require that the caller can only by the AssetAllocators Contract
 		require(msg.sender == _assetAllocators, "!auth");
 
 		_;
 	}
 
-	modifier isActive() {
-		require(active, "Strategy is not active");
+	modifier active() {
+		require(_active, "Strategy is not active");
 
 		_;
 	}
@@ -70,28 +71,44 @@ contract StrategyX {
 
 	/* ========== [FUNCTIONS][MUTATIVE] ========== */
 
-	function set_admin(address admin) public auth_admin() {
-		// Bestow the honor..
-		_admin = admin;
+	/*
+	* Admin
+	*/
+	function set_admin(address admin_) public auth_admin() {
+		_admin = admin_;
 	}
 
-	function set_assetAllocator(address assetAllocators) public auth_admin() {
-		// Bestow the honor..
-		_assetAllocators = assetAllocators;
+	function set_assetAllocator(address assetAllocators_) public auth_admin() {
+		_assetAllocators = assetAllocators_;
 	}
 
-	function set_keeper(address keeper) public auth_admin() {
-		// Bestow the honor..
-		_keeper = keeper;
+	function set_keeper(address keeper_) public auth_admin() {
+		_keeper = keeper_;
 	}
 
-	function toggleIsActive() public auth_keeper() {
-		active = !active;
+	/*
+	* Admin || Keeper
+	*/
+	function set_name(string memory name_) public auth_adminOrKepper() {
+		_name = name_;
 	}
 
+	function set_tokensUsed(address[] memory tokensUsed_) public
+		auth_adminOrKepper()
+	{
+		_tokensUsed = tokensUsed_;
+	}
+
+	function toggleActive() public auth_adminOrKepper() {
+		_active = !_active;
+	}
+
+	/*
+	* Asset Allocator
+	*/
 	function update_depositedBalances(address behalfOf, uint[] memory amounts) public
-		only_assetAllocator()
-		isActive()
+		auth_assetAllocator()
+		active()
 	{
 		// This is where the tokens are deposited into the external DeFi Protocol.
 	}
