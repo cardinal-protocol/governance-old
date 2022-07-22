@@ -122,7 +122,7 @@ abstract contract Strategy {
 		auth_assetAllocator()
 		active()
 	{
-		// This is where the tokens are deposited into the external DeFi Protocol.
+		// Update depostiedBalances
 	}
 
 	function update_withdrawalRequests(
@@ -131,7 +131,7 @@ abstract contract Strategy {
 	) public
 		auth_assetAllocator()
 	{
-
+		// Update withdrawalRequests
 	}
 
 
