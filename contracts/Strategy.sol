@@ -143,7 +143,4 @@ abstract contract Strategy {
 	{
 		return _tokensUsed;
 	}
-
-
-	/* ========== [FUNCTIONS-VIRTUAL] ========== */
 }
