@@ -4,12 +4,19 @@ pragma solidity ^0.8.9;
 
 /* ========== IMPORTS ========== */
 
+// Access
+import "@openzeppelin/contracts/access/Ownable.sol";
+// Token
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+// Security
 import "@openzeppelin/contracts/security/Pausable.sol";
 
-
-contract CardinalProtocol is ERC20Capped, Pausable {
+contract CardinalProtocol is
+	Ownable,
+    ERC20Capped,
+    Pausable
+{
     /* ========== DEPENDENCIES ========== */
 
     using SafeERC20 for CardinalProtocol;
@@ -37,12 +44,6 @@ contract CardinalProtocol is ERC20Capped, Pausable {
     }
     
     /* ========== MODIFIERS ========== */
-
-    modifier operatorOnly() { 
-        require(msg.sender == operator, "!authorized");
-
-        _;
-    }
     
     modifier pauserOnly() {
         require(pausers[msg.sender], "!authorized");
@@ -56,12 +57,12 @@ contract CardinalProtocol is ERC20Capped, Pausable {
     function mint(
         address _to,
         uint256 _amount
-    ) external operatorOnly() whenNotPaused() {
+    ) external onlyOwner() whenNotPaused() {
         // Call ERC20Capped "_mint" function
         super._mint(_to, _amount);
     }
     
-    function setAsPauser(address[] memory addresses) public operatorOnly() {
+    function setAsPauser(address[] memory addresses) public onlyOwner() {
         for (uint i = 0; i < addresses.length; ++i) {
             pausers[addresses[i]] = true;
         }

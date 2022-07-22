@@ -127,24 +127,24 @@ abstract contract Strategy {
 	/*
 	* Asset Allocator
 	*/
-	function update_deposits(
+	function create_deposits(
 		uint64 assetAllocatorTokenId,
 		uint64[] memory amounts
-	) public
+	) external
 		virtual
 		auth_assetAllocator()
 		active()
 	{
-		// Update depostiedBalances
+		// Create a deposit
 	}
 
-	function update_withdrawalRequests(
+	function create_withdrawalRequests(
 		uint64 assetAllocatorTokenId,
 		uint64[] memory amounts
-	) public
+	) external
 		auth_assetAllocator()
 	{
-		// Update withdrawalRequests
+		// Create a withdrawl Request
 	}
 
 
