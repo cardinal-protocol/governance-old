@@ -3,6 +3,18 @@
 pragma solidity ^0.8.9;
 
 abstract contract Strategy {
+	/* ========== [STRUCTS] ========== */
+	struct Deposite {
+		uint64 assetAllocatorTokenId;
+		address[] amounts;
+	}
+
+	struct WithdrawalRequest {
+		uint64 assetAllocatorTokenId;
+		address[] amounts;
+	}
+
+
 	/* ========== [STATE-VARIABLES][AUTH] ========== */
 
 	address public _admin;
@@ -18,9 +30,10 @@ abstract contract Strategy {
 
 	bool public _active = false;
 
+	Deposite[] _deposits;
+	WithdrawalRequest[] _withdrawalRequests;
+
 	mapping(address => uint64) _deployedBalances;
-	mapping(address => uint64) _depositedBalances;
-	mapping(address => uint64) _withdrawalRequests;
 
 
 	/* ========== [CONSTRUCTOR] ========== */
@@ -114,7 +127,7 @@ abstract contract Strategy {
 	/*
 	* Asset Allocator
 	*/
-	function update_depositedBalances(
+	function update_deposits(
 		uint64 assetAllocatorTokenId,
 		uint64[] memory amounts
 	) public

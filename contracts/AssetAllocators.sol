@@ -23,7 +23,7 @@ contract AssetAllocators is
 
 	struct StrategyAllocation {
 		uint64 id;
-		uint64 pct;
+		uint8 pct;
 	}
 
 	struct Guideline {
