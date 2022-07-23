@@ -1,4 +1,4 @@
-// contracts/CardinalProtocol.sol
+// contracts/CardinalProtocolToken.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
@@ -8,16 +8,16 @@ pragma solidity ^0.8.9;
 // /token
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+// /security
+import "@openzeppelin/contracts/security/Pausable.sol";
 
 
 /* ========== [IMPORT][PERSONAL] ========== */
+
 import "./interface/ICardinalProtocol.sol";
 
 
-contract CardinalProtocolToken is
-	AccessControlEnumerable,
-    ERC20Capped,
-{
+contract CardinalProtocolToken is ERC20Capped, Pausable {
     /* ========== [DEPENDENCIES] ========== */
 
     using SafeERC20 for CardinalProtocolToken;
@@ -39,7 +39,7 @@ contract CardinalProtocolToken is
     /* ========== [CONSTRUCTOR] ========== */
 
     constructor (address cardinalProtocolAddress)
-        ERC20("Cardinal Protocol", "CRDP")
+        ERC20("Cardinal Protocol Token", "CPT")
         ERC20Capped(100 * 1000000 * 1e18)
     {
         CARDINAL_PROTOCOL_ADDRESS = cardinalProtocolAddress;
