@@ -5,20 +5,23 @@ pragma solidity ^0.8.9;
 
 /* ========== [IMPORT] ========== */
 
-// access
-import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-// token
+// /token
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-// utils
+// /utils
 import "@openzeppelin/contracts/utils/Counters.sol";
 
+interface CardinalProtocol {
+	function owner() external view returns (address);
+}
 
-contract CardinalProtocolAssetAllocators is
-	AccessControlEnumerable,
-	ERC721Enumerable,
-	Ownable
-{
+
+contract AssetAllocators is ERC721Enumerable {
+
+	/* ========== [DEPENDENCIES] ========== */
+
+	using Counters for Counters.Counter;
+
+
 	/* ========== [STRUCTS] ========== */
 
 	struct StrategyAllocation {
@@ -30,6 +33,11 @@ contract CardinalProtocolAssetAllocators is
 		StrategyAllocation[] strategyAllocations;
 	}
 
+	/* ========== [STATE-VARIABLES][CONST] ========== */
+
+	address public CARDINAL_PROTOCOL_ADDRESS;
+
+
 	/* ========== [STATE VARIABLES] ========== */
 
 	// Custom Types
@@ -39,23 +47,35 @@ contract CardinalProtocolAssetAllocators is
 	address public _treasury;
 
 	mapping(uint64 => address) _whitelistedStrategyAddresses;
-	mapping(uint64 => Guideline) _guidelines;
+	mapping(uint256 => Guideline) _guidelines;
 
 
 	/* ========== [CONTRUCTOR] ========== */
 
 	constructor (
+		address cardinalProtocolAddress,
 		string memory baseTokenURI,
 		address treasury
-	) ERC721("Asset Allocators", "ASSTALLCTR") {
+	) ERC721("Cardinal Protocol Asset Allocators", "CPAA") {
+		CARDINAL_PROTOCOL_ADDRESS = cardinalProtocolAddress;
+
 		_baseTokenURI = baseTokenURI;
 		_treasury = treasury;
-
-		_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 	}
 
 	
 	/* ========== [MODIFIERS] ========== */
+
+	modifier auth_owner() {
+		// Require that the caller can only by the AssetAllocators Contract
+		require(
+			msg.sender == CardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).owner(),
+			"!auth"
+		);
+
+		_;
+	}
+
 
 	modifier mintCompliance() {
 		_;
@@ -72,25 +92,11 @@ contract CardinalProtocolAssetAllocators is
 	}
 
 	// Return the full IPFS URI of a token
-	function tokenURI(uint256 tokenId) public view override(ERC721) returns (string memory) {
+	function tokenURI(uint256 tokenId) public view override(ERC721)
+		returns (string memory)
+	{
 		return ERC721.tokenURI(tokenId);
 	}
-
-	function _beforeTokenTransfer(
-		address from,
-		address to,
-		uint256 tokenId
-	) internal virtual override {
-		super._beforeTokenTransfer(from, to, tokenId);
-	}
-
-	function supportsInterface(bytes4 interfaceId) public view virtual override(
-		AccessControlEnumerable,
-		ERC721Enumerable
-	) returns (bool) {
-		return super.supportsInterface(interfaceId);
-	}
-
 
 	/* ========== [FUNCTION][OVERRIDE] ========== */
 
@@ -101,7 +107,7 @@ contract CardinalProtocolAssetAllocators is
 
 	/* ========== [FUNCTION][SELF-IMPLEMENTATIONS] ========== */
 
-	function setBaseURI(string memory baseTokenURI) external onlyOwner {
+	function setBaseURI(string memory baseTokenURI) external auth_owner() {
 		_baseTokenURI = baseTokenURI;
 	}
 
@@ -110,7 +116,7 @@ contract CardinalProtocolAssetAllocators is
 
 	function mint(
 		address[] memory toSend,
-		Guideline guideline
+		Guideline memory guideline_
 	) public
 		mintCompliance()
 	{
@@ -120,7 +126,7 @@ contract CardinalProtocolAssetAllocators is
 			_mint(toSend[i], _tokenIdTracker.current());
 
 			// Add Guideline
-			_guidelines[_tokenIdTracker.current()] = guideline;
+			_guidelines[_tokenIdTracker.current()] = guideline_;
 			
 			// Increment token id
 			_tokenIdTracker.increment();
@@ -131,16 +137,16 @@ contract CardinalProtocolAssetAllocators is
 	// will need to be passed
 	function depositTokensIntoStrategies(
 		uint AssetAllocatorTokenId,
-		uint[] amounts
+		uint[] memory amounts_
 	) public {
 		// Check if the wallet owns the assetAllocatorId
 		require(
-			_owners[AssetAllocatorTokenId] == msg.sender,
+			msg.sender == ownerOf(AssetAllocatorTokenId),
 			"You do not own this AssetAllocator token"
 		);
 
 		// Retrieve Guideline
-		Guideline tokenGuideLine = guidelines[AssetAllocatorTokenId];
+		Guideline memory tokenGuideLine = _guidelines[AssetAllocatorTokenId];
 
 		// For each Strategy Allocation
 		for (uint i = 0; i < tokenGuideLine.strategyAllocations.length; i++) {
@@ -151,7 +157,7 @@ contract CardinalProtocolAssetAllocators is
 
 	/* ========== [FUNCTION][OTHER] ========== */
 
-	function withdrawToTreasury() public onlyOwner {
+	function withdrawToTreasury() public auth_owner() {
 		uint balance = address(this).balance;
 		
 		payable(_treasury).transfer(balance);

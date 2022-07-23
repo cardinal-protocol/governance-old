@@ -5,17 +5,19 @@ pragma solidity ^0.8.9;
 
 /* ========== [IMPORTS] ========== */
 
-// Access
+// /access
 import "@openzeppelin/contracts/access/Ownable.sol";
-// Token
+import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+// /token
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-// Security
+// /security
 import "@openzeppelin/contracts/security/Pausable.sol";
 
 
 contract CardinalProtocol is
 	Ownable,
+	AccessControlEnumerable,
     ERC20Capped,
     Pausable
 {
@@ -40,6 +42,8 @@ contract CardinalProtocol is
         ERC20("Cardinal Protocol", "CRDP")
         ERC20Capped(100 * 1000000 * 1e18)
     {
+		_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
+
         pausers[msg.sender] = true;
     }
 
