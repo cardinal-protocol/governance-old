@@ -10,8 +10,12 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 // /utils
 import "@openzeppelin/contracts/utils/Counters.sol";
 
+
+/* ========== [IMPORT] ========== */
+
 interface CardinalProtocol {
 	function owner() external view returns (address);
+    function isPauser(address a) external view returns (bool);
 }
 
 
@@ -96,7 +100,7 @@ contract AssetAllocators is ERC721Enumerable {
 	{
 		return ERC721.tokenURI(tokenId);
 	}
-	
+
 
 	/* ========== [FUNCTION][OVERRIDE] ========== */
 

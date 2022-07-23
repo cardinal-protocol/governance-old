@@ -3,17 +3,15 @@
 pragma solidity ^0.8.9;
 
 
-/* ========== [IMPORTS] ========== */
+/* ========== [IMPORT] ========== */
 
 // /token
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 
-interface CardinalProtocol {
-	function owner() external view returns (address);
-    function isPauser(address a) external view returns (bool);
-}
+/* ========== [IMPORT][PERSONAL] ========== */
+import "./interface/ICardinalProtocol.sol";
 
 
 contract CardinalProtocolToken is
@@ -53,7 +51,7 @@ contract CardinalProtocolToken is
     modifier auth_owner() {
 		// Require that the caller can only by the AssetAllocators Contract
 		require(
-			msg.sender == CardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).owner(),
+			msg.sender == ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).owner(),
 			"!auth"
 		);
 
@@ -61,7 +59,7 @@ contract CardinalProtocolToken is
 	}
 
     modifier pauserOnly(address a) {
-        require(CardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).isPauser(a), "!auth");
+        require(ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).isPauser(a), "!auth");
 
         _;
     }
