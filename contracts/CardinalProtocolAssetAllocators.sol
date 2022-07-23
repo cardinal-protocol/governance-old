@@ -15,7 +15,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "./interface/ICardinalProtocol.sol";
 
 
-contract AssetAllocators is ERC721Enumerable {
+contract CardinalProtocolAssetAllocators is ERC721Enumerable {
 
 	/* ========== [DEPENDENCIES] ========== */
 
