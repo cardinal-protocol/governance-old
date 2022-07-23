@@ -24,12 +24,12 @@ abstract contract Strategy {
 	/* ========== [STATE-VARIABLES][CONST] ========== */
 
 	address public CARDINAL_PROTOCOL_ADDRESS;
+	address public CARDINAL_PROTOCOL_ASSET_ALLOCATORS_ADDRESS;
 
 
 	/* ========== [STATE-VARIABLES][AUTH] ========== */
 
 	address public _keeper;
-	address public _assetAllocators;
 
 
 	/* ========== [STATE-VARIABLES] ========== */
@@ -49,12 +49,14 @@ abstract contract Strategy {
 	/* ========== [CONSTRUCTOR] ========== */
 
 	constructor (
-		address CARDINAL_PROTOCOL_ADDRESS_,
+		address cardinalProtocolAddress,
+		address cardinalProtocolAssetAllocatorsAddress,
 		address keeper_,
 		string memory name_,
 		address[] memory tokensUsed_
 	) {
-		CARDINAL_PROTOCOL_ADDRESS = CARDINAL_PROTOCOL_ADDRESS_;
+		CARDINAL_PROTOCOL_ADDRESS = cardinalProtocolAddress;
+		CARDINAL_PROTOCOL_ASSET_ALLOCATORS_ADDRESS = cardinalProtocolAssetAllocatorsAddress;
 
 		_keeper = keeper_;
 
@@ -89,7 +91,7 @@ abstract contract Strategy {
 
 	modifier auth_assetAllocator() {
 		// Require that the caller can only by the AssetAllocators Contract
-		require(msg.sender == _assetAllocators, "!auth");
+		require(msg.sender == CARDINAL_PROTOCOL_ASSET_ALLOCATORS_ADDRESS, "!auth");
 
 		_;
 	}
@@ -106,10 +108,6 @@ abstract contract Strategy {
 	/*
 	* Owner
 	*/
-	function set_assetAllocator(address assetAllocators_) public auth_owner() {
-		_assetAllocators = assetAllocators_;
-	}
-
 	function set_keeper(address keeper_) public auth_owner() {
 		_keeper = keeper_;
 	}

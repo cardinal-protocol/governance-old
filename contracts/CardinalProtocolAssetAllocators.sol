@@ -14,7 +14,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 
-contract AssetAllocators is
+contract CardinalProtocolAssetAllocators is
 	AccessControlEnumerable,
 	ERC721Enumerable,
 	Ownable
