@@ -76,7 +76,6 @@ contract AssetAllocators is ERC721Enumerable {
 		_;
 	}
 
-
 	modifier mintCompliance() {
 		_;
 	}
@@ -97,6 +96,7 @@ contract AssetAllocators is ERC721Enumerable {
 	{
 		return ERC721.tokenURI(tokenId);
 	}
+	
 
 	/* ========== [FUNCTION][OVERRIDE] ========== */
 
