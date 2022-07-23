@@ -12,11 +12,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 
 /* ========== [IMPORT] ========== */
-
-interface CardinalProtocol {
-	function owner() external view returns (address);
-    function isPauser(address a) external view returns (bool);
-}
+import "./interface/ICardinalProtocol.sol";
 
 
 contract AssetAllocators is ERC721Enumerable {
@@ -73,14 +69,10 @@ contract AssetAllocators is ERC721Enumerable {
 	modifier auth_owner() {
 		// Require that the caller can only by the AssetAllocators Contract
 		require(
-			msg.sender == CardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).owner(),
+			msg.sender == ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).owner(),
 			"!auth"
 		);
 
-		_;
-	}
-
-	modifier mintCompliance() {
 		_;
 	}
 
@@ -88,13 +80,12 @@ contract AssetAllocators is ERC721Enumerable {
 	/* ========== [FUNCTION][OVERRIDE][REQUIRED] ========== */
 	
 	function _burn(uint256 tokenId) internal virtual override(ERC721) {
-		
 		// Distribute the tokens that are being yield farmed
 
 		return ERC721._burn(tokenId);
 	}
 
-	// Return the full IPFS URI of a token
+	// Return the full URI of a token
 	function tokenURI(uint256 tokenId) public view override(ERC721)
 		returns (string memory)
 	{
@@ -122,7 +113,6 @@ contract AssetAllocators is ERC721Enumerable {
 		address[] memory toSend,
 		Guideline memory guideline_
 	) public
-		mintCompliance()
 	{
 		// For each toSend, mint the NFT
 		for (uint i = 0; i < toSend.length; i++) {

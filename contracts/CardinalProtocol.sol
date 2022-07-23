@@ -3,7 +3,7 @@
 pragma solidity ^0.8.9;
 
 
-/* ========== [IMPORTS] ========== */
+/* ========== [IMPORT] ========== */
 
 // /access
 import "@openzeppelin/contracts/access/Ownable.sol";
