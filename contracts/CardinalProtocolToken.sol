@@ -18,38 +18,37 @@ import "./interface/ICardinalProtocol.sol";
 
 
 contract CardinalProtocolToken is ERC20Capped, Pausable {
-    /* ========== [DEPENDENCIES] ========== */
+	/* ========== [DEPENDENCIES] ========== */
 
-    using SafeERC20 for CardinalProtocolToken;
-
-
-    /* ========== [EVENTS] ========== */
-
-    event SupplyAmountSet(
-        uint amount,
-        address byOwner
-    );
+	using SafeERC20 for CardinalProtocolToken;
 
 
-    /* ========== [STATE VARIABLES] ========== */
+	/* ========== [EVENTS] ========== */
 
-    address public CARDINAL_PROTOCOL_ADDRESS;
+	event SupplyAmountSet(
+		uint amount,
+		address byOwner
+	);
 
-    
-    /* ========== [CONSTRUCTOR] ========== */
 
-    constructor (address cardinalProtocolAddress)
-        ERC20("Cardinal Protocol Token", "CPT")
-        ERC20Capped(100 * 1000000 * 1e18)
-    {
-        CARDINAL_PROTOCOL_ADDRESS = cardinalProtocolAddress;
-    }
+	/* ========== [STATE VARIABLES] ========== */
 
-    
-    /* ========== [MODIFIERS] ========== */
-    
-    modifier auth_owner() {
-		// Require that the caller can only by the AssetAllocators Contract
+	address public CARDINAL_PROTOCOL_ADDRESS;
+
+
+	/* ========== [CONSTRUCTOR] ========== */
+
+	constructor (address cardinalProtocolAddress)
+		ERC20("Cardinal Protocol Token", "CPT")
+		ERC20Capped(100 * 1000000 * 1e18)
+	{
+		CARDINAL_PROTOCOL_ADDRESS = cardinalProtocolAddress;
+	}
+
+
+	/* ========== [MODIFIERS] ========== */
+
+	modifier auth_owner() {
 		require(
 			msg.sender == ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).owner(),
 			"!auth"
@@ -58,33 +57,39 @@ contract CardinalProtocolToken is ERC20Capped, Pausable {
 		_;
 	}
 
-    modifier pauserOnly(address a) {
-        require(ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).isPauser(a), "!auth");
+	modifier auth_pausers() {
+		require(
+			ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).isPauser(msg.sender),
+			"!auth"
+		);
 
-        _;
-    }
+		_;
+	}
 
 
 	/* ========== [FUNCTIONS][MUTATIVE] ========== */
 
-    /*
+	/*
+	* owner
+	*/
+	function mint(address _to, uint256 _amount) external
+		auth_owner()
+		whenNotPaused()
+	{
+		// Call ERC20Capped "_mint" function
+		super._mint(_to, _amount);
+	}
+
+	/*
 	* Pauser
 	*/
-    function pause() public pauserOnly(msg.sender) whenNotPaused() {
-        // Call Pausable "_pause" function
-        super._pause();
-    }
+	function pause() public auth_pausers() whenNotPaused() {
+		// Call Pausable "_pause" function
+		super._pause();
+	}
 
-    function unpause() public pauserOnly(msg.sender) whenPaused() {
-        // Call Pausable "_unpause" function
-        super._unpause();
-    }
-
-    function mint(address _to, uint256 _amount) external
-        auth_owner()
-        whenNotPaused()
-    {
-        // Call ERC20Capped "_mint" function
-        super._mint(_to, _amount);
-    }
+	function unpause() public auth_pausers() whenPaused() {
+		// Call Pausable "_unpause" function
+		super._unpause();
+	}
 }
