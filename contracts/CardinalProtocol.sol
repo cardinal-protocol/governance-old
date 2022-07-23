@@ -77,7 +77,6 @@ contract CardinalProtocol is
         super._unpause();
     }
 
-
     function mint(address _to, uint256 _amount) external
         onlyOwner()
         whenNotPaused()
