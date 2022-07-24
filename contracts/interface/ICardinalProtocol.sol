@@ -12,6 +12,9 @@ import "@openzeppelin/contracts/access/IAccessControlEnumerable.sol";
 
 
 interface ICardinalProtocol is IERC20, IAccessControlEnumerable {
-	function owner() external view returns (address);
-    function isPauser(address a) external view returns (bool);
+	function authLevel_admin(address account) external view returns (bool);
+
+	function authLevel_executive(address account) external view returns (bool);
+
+	function authLevel_pauser(address account) external view returns (bool);
 }

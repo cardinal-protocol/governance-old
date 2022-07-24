@@ -48,18 +48,18 @@ contract CardinalProtocolToken is ERC20Capped, Pausable {
 
 	/* ========== [MODIFIERS] ========== */
 
-	modifier auth_owner() {
+	modifier authLevel_executive() {
 		require(
-			msg.sender == ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).owner(),
+			ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).authLevel_executive(msg.sender),
 			"!auth"
 		);
 
 		_;
 	}
 
-	modifier auth_pausers() {
+	modifier authLevel_pauser() {
 		require(
-			ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).isPauser(msg.sender),
+			ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).authLevel_pauser(msg.sender),
 			"!auth"
 		);
 
@@ -70,10 +70,10 @@ contract CardinalProtocolToken is ERC20Capped, Pausable {
 	/* ========== [FUNCTIONS][MUTATIVE] ========== */
 
 	/*
-	* owner
+	* Executive
 	*/
 	function mint(address _to, uint256 _amount) external
-		auth_owner()
+		authLevel_executive()
 		whenNotPaused()
 	{
 		// Call ERC20Capped "_mint" function
@@ -83,12 +83,12 @@ contract CardinalProtocolToken is ERC20Capped, Pausable {
 	/*
 	* Pauser
 	*/
-	function pause() public auth_pausers() whenNotPaused() {
+	function pause() public authLevel_pauser() whenNotPaused() {
 		// Call Pausable "_pause" function
 		super._pause();
 	}
 
-	function unpause() public auth_pausers() whenPaused() {
+	function unpause() public authLevel_pauser() whenPaused() {
 		// Call Pausable "_unpause" function
 		super._unpause();
 	}

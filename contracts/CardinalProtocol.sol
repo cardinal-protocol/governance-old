@@ -6,41 +6,46 @@ pragma solidity ^0.8.9;
 /* ========== [IMPORT] ========== */
 
 // /access
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 
 
-contract CardinalProtocol is Ownable, AccessControlEnumerable {
+contract CardinalProtocol is AccessControlEnumerable {
 
-    /* ========== [STATE VARIABLES] ========== */
+	/* ========== [STATE VARIABLES] ========== */
+	
+	// CONSTANT
+	bytes32 public constant EXECUTIVE_ROLE = keccak256("EXECUTIVE_ROLE");
+	bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
+	bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
-    mapping(address => bool) _pausers;
+	
+	/* ========== [CONSTRUCTOR] ========== */
 
-    
-    /* ========== [CONSTRUCTOR] ========== */
-
-    constructor () {
+	constructor () {
 		_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-
-        _pausers[msg.sender] = true;
-    }
-
-    
-    /* ========== [FUNCTIONS][MUTATIVE] ========== */
-
-    /*
-	* Owner
-	*/
-    function setAsPausers(address[] memory addresses) public onlyOwner() {
-        for (uint i = 0; i < addresses.length; ++i) {
-            _pausers[addresses[i]] = true;
-        }
-    }
+	}
 
 
-    /* ========== [FUNCTIONS][VIEW] ========== */
+	/* ========== [FUNCTIONS][VIEW] ========== */
 
-	function isPauser(address a) public view returns (bool) {
-		return _pausers[a];
+	function authLevel_admin(address a) public view returns (bool) {
+		return
+			hasRole(DEFAULT_ADMIN_ROLE, a)
+		;
+	}
+
+	function authLevel_executive(address a) public view returns (bool) {
+		return
+			hasRole(DEFAULT_ADMIN_ROLE, a) ||
+			hasRole(EXECUTIVE_ROLE, a)
+		;
+	}
+
+	function authLevel_pauser(address a) public view returns (bool) {
+		return
+			hasRole(DEFAULT_ADMIN_ROLE, a) ||
+			hasRole(EXECUTIVE_ROLE, a) ||
+			hasRole(PAUSER_ROLE, a)
+		;
 	}
 }
