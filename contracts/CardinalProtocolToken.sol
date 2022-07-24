@@ -48,9 +48,9 @@ contract CardinalProtocolToken is ERC20Capped, Pausable {
 
 	/* ========== [MODIFIERS] ========== */
 
-	modifier authLevel_executive() {
+	modifier authLevel_admin() {
 		require(
-			ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).authLevel_executive(msg.sender),
+			ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).authLevel_admin(msg.sender),
 			"!auth"
 		);
 
@@ -73,7 +73,7 @@ contract CardinalProtocolToken is ERC20Capped, Pausable {
 	* Executive
 	*/
 	function mint(address _to, uint256 _amount) external
-		authLevel_executive()
+		authLevel_admin()
 		whenNotPaused()
 	{
 		// Call ERC20Capped "_mint" function

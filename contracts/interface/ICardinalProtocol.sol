@@ -16,5 +16,7 @@ interface ICardinalProtocol is IERC20, IAccessControlEnumerable {
 
 	function authLevel_executive(address account) external view returns (bool);
 
+	function authLevel_manager(address account) external view returns (bool);
+
 	function authLevel_member(address account) external view returns (bool);
 }
