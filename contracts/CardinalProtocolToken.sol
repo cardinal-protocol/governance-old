@@ -57,9 +57,9 @@ contract CardinalProtocolToken is ERC20Capped, Pausable {
 		_;
 	}
 
-	modifier authLevel_pauser() {
+	modifier authLevel_member() {
 		require(
-			ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).authLevel_pauser(msg.sender),
+			ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).authLevel_member(msg.sender),
 			"!auth"
 		);
 
@@ -83,12 +83,12 @@ contract CardinalProtocolToken is ERC20Capped, Pausable {
 	/*
 	* Pauser
 	*/
-	function pause() public authLevel_pauser() whenNotPaused() {
+	function pause() public authLevel_member() whenNotPaused() {
 		// Call Pausable "_pause" function
 		super._pause();
 	}
 
-	function unpause() public authLevel_pauser() whenPaused() {
+	function unpause() public authLevel_member() whenPaused() {
 		// Call Pausable "_unpause" function
 		super._unpause();
 	}
