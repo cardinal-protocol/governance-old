@@ -41,10 +41,19 @@ contract CardinalProtocol is AccessControlEnumerable {
 		;
 	}
 
+	function authLevel_manager(address a) public view returns (bool) {
+		return
+			hasRole(DEFAULT_ADMIN_ROLE, a) ||
+			hasRole(EXECUTIVE_ROLE, a) ||
+			hasRole(MANAGER_ROLE, a)
+		;
+	}
+
 	function authLevel_member(address a) public view returns (bool) {
 		return
 			hasRole(DEFAULT_ADMIN_ROLE, a) ||
 			hasRole(EXECUTIVE_ROLE, a) ||
+			hasRole(MANAGER_ROLE, a) ||
 			hasRole(MEMBER_ROLE, a)
 		;
 	}
