@@ -7,7 +7,8 @@ pragma solidity ^0.8.9;
 /* ========== [IMPORT] ========== */
 
 // @openzeppelin/contracts/access/..
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/AccessControlEnumerable.sol";
+import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+
 
 /*
  *   ________   ___  ___  _____  _____   __     ___  ___  ____  __________  _________  __ 
