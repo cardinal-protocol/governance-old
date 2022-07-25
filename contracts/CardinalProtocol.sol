@@ -1,19 +1,25 @@
 // contracts/CardinalProtocol.sol
 // SPDX-License-Identifier: MIT
+
 pragma solidity ^0.8.9;
 
 
 /* ========== [IMPORT] ========== */
 
-// /access
-import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+// @openzeppelin/contracts/access/..
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/AccessControlEnumerable.sol";
 
-
+/*
+ *   ________   ___  ___  _____  _____   __     ___  ___  ____  __________  _________  __ 
+ *  / ___/ _ | / _ \/ _ \/  _/ |/ / _ | / /    / _ \/ _ \/ __ \/_  __/ __ \/ ___/ __ \/ / 
+ * / /__/ __ |/ , _/ // // //    / __ |/ /__  / ___/ , _/ /_/ / / / / /_/ / /__/ /_/ / /__
+ * \___/_/ |_/_/|_/____/___/_/|_/_/ |_/____/ /_/  /_/|_|\____/ /_/  \____/\___/\____/____/
+ *                                                                                        
+*/
 contract CardinalProtocol is AccessControlEnumerable {
 
 	/* ========== [STATE VARIABLES] ========== */
 
-	// CONSTANT
 	bytes32 public constant EXECUTIVE_ROLE = keccak256("EXECUTIVE_ROLE");
 	bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
 	bytes32 public constant MEMBER_ROLE = keccak256("MEMBER_ROLE");
