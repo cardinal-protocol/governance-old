@@ -69,7 +69,7 @@ contract CardinalProtocolAssetAllocators is ERC721Enumerable {
 	modifier auth_owner() {
 		// Require that the caller can only by the AssetAllocators Contract
 		require(
-			msg.sender == ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).owner(),
+			ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).authLevel_chief(msg.sender),
 			"!auth"
 		);
 

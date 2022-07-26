@@ -1,6 +1,6 @@
 // contracts/CardinalProtocolToken.sol
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.10;
 
 
 /* ========== [IMPORT] ========== */
@@ -57,9 +57,9 @@ contract CardinalProtocolToken is ERC20Capped, Pausable {
 		_;
 	}
 
-	modifier authLevel_member() {
+	modifier authLevel_executive() {
 		require(
-			ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).authLevel_member(msg.sender),
+			ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).authLevel_executive(msg.sender),
 			"!auth"
 		);
 
@@ -73,7 +73,6 @@ contract CardinalProtocolToken is ERC20Capped, Pausable {
 	* Executive
 	*/
 	function mint(address _to, uint256 _amount) external
-		authLevel_admin()
 		whenNotPaused()
 	{
 		// Call ERC20Capped "_mint" function
@@ -83,12 +82,12 @@ contract CardinalProtocolToken is ERC20Capped, Pausable {
 	/*
 	* Pauser
 	*/
-	function pause() public authLevel_member() whenNotPaused() {
+	function pause() public authLevel_executive() whenNotPaused() {
 		// Call Pausable "_pause" function
 		super._pause();
 	}
 
-	function unpause() public authLevel_member() whenPaused() {
+	function unpause() public authLevel_executive() whenPaused() {
 		// Call Pausable "_unpause" function
 		super._unpause();
 	}
