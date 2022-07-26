@@ -11,9 +11,11 @@ async function main() {
 		'CardinalProtocol'
 	);
 
-	const cardinalProtocol = await CardinalProtocol.deploy();
+	const cardinalProtocol = await CardinalProtocol.deploy({
+		gasPrice: 25000000000
+	});
 
-	console.log(`Token address: ${cardinalProtocol.address}`);
+	console.log(`Contract address: ${cardinalProtocol.address}`);
 }
 
 main()
