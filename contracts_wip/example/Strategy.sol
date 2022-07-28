@@ -57,17 +57,15 @@ abstract contract Strategy is CardinalProtocolControl {
 	modifier authLevel_keeper() {
 		require(
 			ICardinalProtocol(_cardinalProtocolAddress).authLevel_manager(msg.sender) ||
-			msg.sender == _keeper,
+			_keeper == msg.sender,
 			"!auth"
 		);
-
 
 		_;
 	}
 
 	modifier auth_assetAllocator() {
-		// Require that the caller can only by the AssetAllocators Contract
-		require(msg.sender == _cardinalProtocolAssetAllocatorsAddress, "!auth");
+		require(_cardinalProtocolAssetAllocatorsAddress == msg.sender, "!auth");
 
 		_;
 	}

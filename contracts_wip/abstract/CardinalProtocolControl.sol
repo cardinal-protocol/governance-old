@@ -8,14 +8,14 @@ import "../interface/ICardinalProtocol.sol";
 
 
 abstract contract CardinalProtocolControl {
-	/* ========== [EVENTS] ========== */
+	/* ========== [EVENT] ========== */
 	event NewCardinalProtocolAddress(
 		address oldAddress,
 		address newAddress
 	);
 
 
-	/* ========== [STATE VARIABLES] ========== */
+	/* ========== [STATE-VARIABLE] ========== */
 	address public _cardinalProtocolAddress;
 
 
@@ -25,7 +25,7 @@ abstract contract CardinalProtocolControl {
 	}
 
 
-	/* ========== [MODIFIERS] ========== */
+	/* ========== [MODIFIER] ========== */
 	modifier authLevel_admin() {
 		require(
 			ICardinalProtocol(_cardinalProtocolAddress).authLevel_admin(msg.sender),
@@ -63,7 +63,7 @@ abstract contract CardinalProtocolControl {
 	}
 
 
-	/* ========== [FUNCTIONS][MUTATIVE] ========== */
+	/* ========== [FUNCTION][MUTATIVE] ========== */
 	/*
 	* Auth Level: _chief 
 	*/
