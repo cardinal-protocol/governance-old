@@ -15,11 +15,11 @@ import "./abstract/CardinalProtocolControl.sol";
 
 
 contract CardinalProtocolAssetAllocators is ERC721Enumerable, CardinalProtocolControl {
-	/* ========== [DEPENDENCIES] ========== */
+	/* ========== [DEPENDENCY] ========== */
 	using Counters for Counters.Counter;
 
 
-	/* ========== [STRUCTS] ========== */
+	/* ========== [STRUCT] ========== */
 	struct StrategyAllocation {
 		uint64 id;
 		uint8 pct;
@@ -29,7 +29,7 @@ contract CardinalProtocolAssetAllocators is ERC721Enumerable, CardinalProtocolCo
 		StrategyAllocation[] strategyAllocations;
 	}
 
-	/* ========== [STATE VARIABLES] ========== */
+	/* ========== [STATE VARIABLE] ========== */
 	// Custom Types
 	Counters.Counter public _tokenIdTracker;
 
@@ -88,7 +88,7 @@ contract CardinalProtocolAssetAllocators is ERC721Enumerable, CardinalProtocolCo
 	}
 
 
-	/* ========== [FUNCTION][SELF-IMPLEMENTATIONS] ========== */
+	/* ========== [FUNCTION][SELF-IMPLEMENTATION] ========== */
 	function setBaseURI(string memory baseTokenURI) external authLevel_chief() {
 		_baseTokenURI = baseTokenURI;
 	}

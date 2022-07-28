@@ -15,7 +15,7 @@ abstract contract CardinalProtocolControl {
 	);
 
 
-	/* ========== [STATE-VARIABLE] ========== */
+	/* ========== [STATE VARIABLE] ========== */
 	address public _cardinalProtocolAddress;
 
 
