@@ -25,7 +25,7 @@ abstract contract Strategy is CardinalProtocolControl {
 	address public _cardinalProtocolAssetAllocatorsAddress;
 	address public _keeper;
 	
-	string public _name;	
+	string public _name;
 	
 	bool public _active = false;
 

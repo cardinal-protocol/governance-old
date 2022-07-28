@@ -4,26 +4,22 @@ pragma solidity ^0.8.9;
 
 
 /* ========== [IMPORT] ========== */
-
-// /token
+// @openzeppelin/contracts/token
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-// /utils
+// @openzeppelin/contracts/utils
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 
 /* ========== [IMPORT] ========== */
-import "./interface/ICardinalProtocol.sol";
+import "./abstract/CardinalProtocolControl.sol";
 
 
-contract CardinalProtocolAssetAllocators is ERC721Enumerable {
-
+contract CardinalProtocolAssetAllocators is ERC721Enumerable, CardinalProtocolControl {
 	/* ========== [DEPENDENCIES] ========== */
-
 	using Counters for Counters.Counter;
 
 
 	/* ========== [STRUCTS] ========== */
-
 	struct StrategyAllocation {
 		uint64 id;
 		uint8 pct;
@@ -33,13 +29,7 @@ contract CardinalProtocolAssetAllocators is ERC721Enumerable {
 		StrategyAllocation[] strategyAllocations;
 	}
 
-	/* ========== [STATE-VARIABLES][CONST] ========== */
-
-	address public CARDINAL_PROTOCOL_ADDRESS;
-
-
 	/* ========== [STATE VARIABLES] ========== */
-
 	// Custom Types
 	Counters.Counter public _tokenIdTracker;
 
@@ -51,14 +41,14 @@ contract CardinalProtocolAssetAllocators is ERC721Enumerable {
 
 
 	/* ========== [CONTRUCTOR] ========== */
-
 	constructor (
-		address cardinalProtocolAddress,
+		address cardinalProtocolAddress_,
 		string memory baseTokenURI,
 		address treasury
-	) ERC721("Cardinal Protocol Asset Allocators", "CPAA") {
-		CARDINAL_PROTOCOL_ADDRESS = cardinalProtocolAddress;
-
+	)
+		ERC721("Cardinal Protocol Asset Allocators", "CPAA")
+		CardinalProtocolControl(cardinalProtocolAddress_)
+	{
 		_baseTokenURI = baseTokenURI;
 		_treasury = treasury;
 	}
@@ -66,19 +56,8 @@ contract CardinalProtocolAssetAllocators is ERC721Enumerable {
 	
 	/* ========== [MODIFIERS] ========== */
 
-	modifier auth_owner() {
-		// Require that the caller can only by the AssetAllocators Contract
-		require(
-			ICardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).authLevel_chief(msg.sender),
-			"!auth"
-		);
 
-		_;
-	}
-
-
-	/* ========== [FUNCTION][OVERRIDE][REQUIRED] ========== */
-	
+	/* ========== [OVERRIDE][FUNCTION][REQUIRED] ========== */
 	function _burn(uint256 tokenId) internal virtual override(ERC721) {
 		// Distribute the tokens that are being yield farmed
 
@@ -86,34 +65,31 @@ contract CardinalProtocolAssetAllocators is ERC721Enumerable {
 	}
 
 	// Return the full URI of a token
-	function tokenURI(uint256 tokenId) public view override(ERC721)
+	function tokenURI(uint256 tokenId) public view
+		override(ERC721)
 		returns (string memory)
 	{
 		return ERC721.tokenURI(tokenId);
 	}
 
 
-	/* ========== [FUNCTION][OVERRIDE] ========== */
-
+	/* ========== [OVERRIDE][FUNCTION][VIEW] ========== */
 	function _baseURI() internal view virtual override returns (string memory) {
 		return _baseTokenURI;
 	}
 
 
 	/* ========== [FUNCTION][SELF-IMPLEMENTATIONS] ========== */
-
-	function setBaseURI(string memory baseTokenURI) external auth_owner() {
+	function setBaseURI(string memory baseTokenURI) external authLevel_chief() {
 		_baseTokenURI = baseTokenURI;
 	}
 
 
 	/* ========== [FUNCTION] ========== */
-
 	function mint(
 		address[] memory toSend,
 		Guideline memory guideline_
-	) public
-	{
+	) public {
 		// For each toSend, mint the NFT
 		for (uint i = 0; i < toSend.length; i++) {
 			// Mint token
@@ -150,8 +126,7 @@ contract CardinalProtocolAssetAllocators is ERC721Enumerable {
 
 
 	/* ========== [FUNCTION][OTHER] ========== */
-
-	function withdrawToTreasury() public auth_owner() {
+	function withdrawToTreasury() public authLevel_chief() {
 		uint balance = address(this).balance;
 		
 		payable(_treasury).transfer(balance);
