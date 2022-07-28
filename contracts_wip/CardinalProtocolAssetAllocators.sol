@@ -53,10 +53,19 @@ contract CardinalProtocolAssetAllocators is ERC721Enumerable, CardinalProtocolCo
 		_treasury = treasury;
 	}
 
+
+	/* ========== [MODIFIER] ========== */
+	modifier auth_ownsNFT(uint256 AssetAllocatorTokenId) {
+		// Check if the wallet owns the assetAllocatorId
+		require(
+			ownerOf(AssetAllocatorTokenId) == msg.sender,
+			"You do not own this AssetAllocator token"
+		);
+
+		_;
+	}
 	
-	/* ========== [MODIFIERS] ========== */
-
-
+	
 	/* ========== [OVERRIDE][FUNCTION][REQUIRED] ========== */
 	function _burn(uint256 tokenId) internal virtual override(ERC721) {
 		// Distribute the tokens that are being yield farmed
@@ -85,7 +94,7 @@ contract CardinalProtocolAssetAllocators is ERC721Enumerable, CardinalProtocolCo
 	}
 
 
-	/* ========== [FUNCTION] ========== */
+	/* ========== [FUNCTION][MUTATIVE] ========== */
 	function mint(
 		address[] memory toSend,
 		Guideline memory guideline_
@@ -103,18 +112,13 @@ contract CardinalProtocolAssetAllocators is ERC721Enumerable, CardinalProtocolCo
 		}
 	}
 
-	// To forward any erc20s from this contract, an array of erc20 token addresses
-	// will need to be passed
+	
 	function depositTokensIntoStrategies(
-		uint AssetAllocatorTokenId,
+		uint256 AssetAllocatorTokenId,
 		uint[] memory amounts_
-	) public {
-		// Check if the wallet owns the assetAllocatorId
-		require(
-			msg.sender == ownerOf(AssetAllocatorTokenId),
-			"You do not own this AssetAllocator token"
-		);
-
+	) public
+		auth_ownsNFT(AssetAllocatorTokenId)
+	{
 		// Retrieve Guideline
 		Guideline memory tokenGuideLine = _guidelines[AssetAllocatorTokenId];
 
