@@ -12,10 +12,10 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 
 
 /* ========== [IMPORT][PERSONAL] ========== */
-import "./abstract/CardinalProtocolController.sol";
+import "./abstract/CardinalProtocolControl.sol";
 
 
-contract CardinalProtocolToken is ERC20Capped, Pausable, CardinalProtocolController {
+contract CardinalProtocolToken is ERC20Capped, Pausable, CardinalProtocolControl {
 	/* ========== [DEPENDENCIES] ========== */
 	using SafeERC20 for CardinalProtocolToken;
 
@@ -31,7 +31,7 @@ contract CardinalProtocolToken is ERC20Capped, Pausable, CardinalProtocolControl
 	constructor (address cardinalProtocolAddress_)
 		ERC20("Cardinal Protocol Token", "CPT")
 		ERC20Capped(100 * 1000000 * 1e18)
-		CardinalProtocolController(cardinalProtocolAddress_)
+		CardinalProtocolControl(cardinalProtocolAddress_)
 	{}
 
 

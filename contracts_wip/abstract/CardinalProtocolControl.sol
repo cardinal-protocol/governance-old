@@ -7,7 +7,7 @@ pragma solidity ^0.8.10;
 import "../interface/ICardinalProtocol.sol";
 
 
-abstract contract CardinalProtocolController {
+abstract contract CardinalProtocolControl {
 	/* ========== [EVENTS] ========== */
 	event NewCardinalProtocolAddress(
 		address oldAddress,
