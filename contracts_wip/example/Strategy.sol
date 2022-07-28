@@ -1,16 +1,15 @@
-// contracts/Strategy.sol
+// contracts/example/Strategy.sol
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.9;
 
 
-interface CardinalProtocol {
-	function owner() external view returns (address);
-}
+/* ========== [IMPORT][PERSONAl] ========== */
+import "../abstract/CardinalProtocolControl.sol";
 
-abstract contract Strategy {
+
+abstract contract Strategy is CardinalProtocolControl {
 	/* ========== [STRUCTS] ========== */
-	
 	struct Deposite {
 		uint64 assetAllocatorTokenId;
 		address[] amounts;
@@ -22,42 +21,31 @@ abstract contract Strategy {
 	}
 
 
-	/* ========== [STATE-VARIABLES][CONST] ========== */
-
-	address public CARDINAL_PROTOCOL_ADDRESS;
-	address public CARDINAL_PROTOCOL_ASSET_ALLOCATORS_ADDRESS;
-
-
-	/* ========== [STATE-VARIABLES][AUTH] ========== */
-
-	address public _keeper;
-
-
 	/* ========== [STATE-VARIABLES] ========== */
+	address public _cardinalProtocolAssetAllocatorsAddress;
+	address public _keeper;
 	
-	string public _name;
+	string public _name;	
+	
+	bool public _active = false;
 
 	address[] public _tokensUsed;
 
-	bool public _active = false;
-
 	Deposite[] _deposits;
+	
 	WithdrawalRequest[] _withdrawalRequests;
 
 	mapping(address => uint64) _deployedBalances;
 
 
 	/* ========== [CONSTRUCTOR] ========== */
-
 	constructor (
-		address cardinalProtocolAddress,
-		address cardinalProtocolAssetAllocatorsAddress,
+		address cardinalProtocolAssetAllocatorsAddress_,
 		address keeper_,
 		string memory name_,
 		address[] memory tokensUsed_
 	) {
-		CARDINAL_PROTOCOL_ADDRESS = cardinalProtocolAddress;
-		CARDINAL_PROTOCOL_ASSET_ALLOCATORS_ADDRESS = cardinalProtocolAssetAllocatorsAddress;
+		_cardinalProtocolAssetAllocatorsAddress = cardinalProtocolAssetAllocatorsAddress_;
 
 		_keeper = keeper_;
 
@@ -66,33 +54,20 @@ abstract contract Strategy {
 
 	}
 
-
-	/* ========== [MODIFIERS] ========== */
-
-	modifier auth_owner() {
-		// Require that the caller can only by the AssetAllocators Contract
+	modifier authLevel_keeper() {
 		require(
-			msg.sender == CardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).owner(),
+			ICardinalProtocol(_cardinalProtocolAddress).authLevel_manager(msg.sender) ||
+			msg.sender == _keeper,
 			"!auth"
 		);
 
-		_;
-	}
-
-	modifier auth_adminOrKepper() {
-		// Require that the caller can only by the AssetAllocators Contract
-		require(
-			msg.sender == _keeper ||
-			msg.sender == CardinalProtocol(CARDINAL_PROTOCOL_ADDRESS).owner(),
-			"!auth"
-		);
 
 		_;
 	}
 
 	modifier auth_assetAllocator() {
 		// Require that the caller can only by the AssetAllocators Contract
-		require(msg.sender == CARDINAL_PROTOCOL_ASSET_ALLOCATORS_ADDRESS, "!auth");
+		require(msg.sender == _cardinalProtocolAssetAllocatorsAddress, "!auth");
 
 		_;
 	}
@@ -107,38 +82,38 @@ abstract contract Strategy {
 	/* ========== [FUNCTIONS][MUTATIVE] ========== */
 
 	/*
-	* Owner
+	* Auth Level: _manager
 	*/
-	function set_keeper(address keeper_) public auth_owner() {
+	function set_keeper(address keeper_) public authLevel_manager() {
 		_keeper = keeper_;
 	}
 
 	/*
-	* Admin || Keeper
+	* Auth Level: _keeper
 	*/
 	function set_name(string memory name_) public
 		virtual
-		auth_adminOrKepper()
+		authLevel_keeper()
 	{
 		_name = name_;
 	}
 
 	function set_tokensUsed(address[] memory tokensUsed_) public
 		virtual
-		auth_adminOrKepper()
+		authLevel_keeper()
 	{
 		_tokensUsed = tokensUsed_;
 	}
 
 	function toggleActive() public
 		virtual
-		auth_adminOrKepper()
+		authLevel_keeper()
 	{
 		_active = !_active;
 	}
 
 	/*
-	* Asset Allocator
+	* Auth: _cardinalProtocolAssetAllocatorsAddress
 	*/
 	function create_deposits(
 		uint64 assetAllocatorTokenId,
@@ -163,10 +138,7 @@ abstract contract Strategy {
 
 	/* ========== [FUNCTIONS][NON-MUTATIVE] ========== */
 
-	function tokensUsed() public view
-		virtual
-		returns (address[] memory)
-	{
+	function tokensUsed() public view virtual returns (address[] memory) {
 		return _tokensUsed;
 	}
 }
