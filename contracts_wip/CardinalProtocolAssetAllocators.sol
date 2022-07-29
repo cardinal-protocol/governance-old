@@ -32,6 +32,7 @@ contract CardinalProtocolAssetAllocators is
 		StrategyAllocation[] strategyAllocations;
 	}
 
+
 	/* ========== [STATE VARIABLE] ========== */
 	// Custom Types
 	Counters.Counter public _tokenIdTracker;
@@ -45,11 +46,13 @@ contract CardinalProtocolAssetAllocators is
 
 	/* ========== [EVENT] ========== */
 	event DepositedTokensIntoStrategy(
-		StrategyAllocation strategyAllocation,
+		uint64 strategy,
 		uint256[] amounts
 	);
 
-	event WithdrewAllTokensFromStrategy(StrategyAllocation strategyAllocation);
+	event WithdrewTokensFromStrategy(
+		uint64 strategy
+	);
 
 
 	/* ========== [CONTRUCTOR] ========== */
@@ -83,9 +86,12 @@ contract CardinalProtocolAssetAllocators is
 		// Distribute the tokens that are being yield farmed
 
 		for (uint256 i = 0; i < _guidelines[tokenId].strategyAllocations.length; i++) {
-			StrategyAllocation memory sA = _guidelines[tokenId].strategyAllocations[i];
+			// Withdraw tokens
 
-			emit WithdrewAllTokensFromStrategy(sA);
+			// [EMIT]
+			emit WithdrewTokensFromStrategy(
+				_guidelines[tokenId].strategyAllocations[i].id
+			);
 		}
 
 		return ERC721._burn(tokenId);
@@ -137,14 +143,13 @@ contract CardinalProtocolAssetAllocators is
 	) public
 		auth_ownsNFT(tokenId)
 	{
-		// Retrieve Guideline
-		Guideline memory tokenGuideLine = _guidelines[tokenId];
-
 		// For each Strategy Allocation
-		for (uint i = 0; i < tokenGuideLine.strategyAllocations.length; i++) {
+		for (uint i = 0; i < _guidelines[tokenId].strategyAllocations.length; i++) {
+			// Deposit tokens
 			
+			// [EMIT]
 			emit DepositedTokensIntoStrategy(
-				tokenGuideLine.strategyAllocations[i],
+				_guidelines[tokenId].strategyAllocations[i].id,
 				amounts_
 			);
 		}
