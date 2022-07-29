@@ -14,7 +14,10 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "./abstract/CardinalProtocolControl.sol";
 
 
-contract CardinalProtocolAssetAllocators is ERC721Enumerable, CardinalProtocolControl {
+contract CardinalProtocolAssetAllocators is
+	ERC721Enumerable,
+	CardinalProtocolControl
+{
 	/* ========== [DEPENDENCY] ========== */
 	using Counters for Counters.Counter;
 
@@ -40,17 +43,26 @@ contract CardinalProtocolAssetAllocators is ERC721Enumerable, CardinalProtocolCo
 	mapping(uint256 => Guideline) _guidelines;
 
 
+	/* ========== [EVENT] ========== */
+	event DepositedTokensIntoStrategy(
+		StrategyAllocation strategyAllocation,
+		uint256[] amounts
+	);
+
+	event WithdrewAllTokensFromStrategy(StrategyAllocation strategyAllocation);
+
+
 	/* ========== [CONTRUCTOR] ========== */
 	constructor (
 		address cardinalProtocolAddress_,
-		string memory baseTokenURI,
-		address treasury
+		string memory baseTokenURI_,
+		address treasury_
 	)
 		ERC721("Cardinal Protocol Asset Allocators", "CPAA")
 		CardinalProtocolControl(cardinalProtocolAddress_)
 	{
-		_baseTokenURI = baseTokenURI;
-		_treasury = treasury;
+		_baseTokenURI = baseTokenURI_;
+		_treasury = treasury_;
 	}
 
 
@@ -69,6 +81,12 @@ contract CardinalProtocolAssetAllocators is ERC721Enumerable, CardinalProtocolCo
 	/* ========== [OVERRIDE][FUNCTION][REQUIRED] ========== */
 	function _burn(uint256 tokenId) internal virtual override(ERC721) {
 		// Distribute the tokens that are being yield farmed
+
+		for (uint256 i = 0; i < _guidelines[tokenId].strategyAllocations.length; i++) {
+			StrategyAllocation memory sA = _guidelines[tokenId].strategyAllocations[i];
+
+			emit WithdrewAllTokensFromStrategy(sA);
+		}
 
 		return ERC721._burn(tokenId);
 	}
@@ -104,28 +122,33 @@ contract CardinalProtocolAssetAllocators is ERC721Enumerable, CardinalProtocolCo
 			// Mint token
 			_mint(toSend[i], _tokenIdTracker.current());
 
-			// Add Guideline
+			// Create GuideLine for minted token
 			_guidelines[_tokenIdTracker.current()] = guideline_;
 			
-			// Increment token id
+			// [INCREMENT] token id
 			_tokenIdTracker.increment();
 		}
 	}
 
 	
 	function depositTokensIntoStrategies(
-		uint256 AssetAllocatorTokenId,
-		uint[] memory amounts_
+		uint256 tokenId,
+		uint256[] memory amounts_
 	) public
-		auth_ownsNFT(AssetAllocatorTokenId)
+		auth_ownsNFT(tokenId)
 	{
 		// Retrieve Guideline
-		Guideline memory tokenGuideLine = _guidelines[AssetAllocatorTokenId];
+		Guideline memory tokenGuideLine = _guidelines[tokenId];
 
 		// For each Strategy Allocation
 		for (uint i = 0; i < tokenGuideLine.strategyAllocations.length; i++) {
 			
+			emit DepositedTokensIntoStrategy(
+				tokenGuideLine.strategyAllocations[i],
+				amounts_
+			);
 		}
+
 	}
 
 
