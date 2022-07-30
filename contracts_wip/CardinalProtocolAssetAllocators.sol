@@ -45,6 +45,10 @@ contract CardinalProtocolAssetAllocators is
 
 
 	/* ========== [EVENT] ========== */
+	event DepositedEther(
+		uint256 amount
+	);
+
 	event DepositedTokensIntoStrategy(
 		uint64 strategy,
 		uint256[] amounts
@@ -119,10 +123,7 @@ contract CardinalProtocolAssetAllocators is
 
 
 	/* ========== [FUNCTION][MUTATIVE] ========== */
-	function mint(
-		address[] memory toSend,
-		Guideline memory guideline_
-	) public {
+	function mint(address[] memory toSend, Guideline memory guideline_) public {
 		// For each toSend, mint the NFT
 		for (uint i = 0; i < toSend.length; i++) {
 			// Mint token
@@ -136,7 +137,25 @@ contract CardinalProtocolAssetAllocators is
 		}
 	}
 
-	
+	function depositEther(
+		uint256 tokenId,
+		uint256 amount_
+	) public
+		auth_ownsNFT(tokenId)
+	{
+		// [EMIT]
+		emit DepositedEther(
+			amount_
+		);
+
+		// For each Strategy Allocation
+		for (uint i = 0; i < _guidelines[tokenId].strategyAllocations.length; i++) {
+			// Swap eth for 
+
+			// Deposit tokens into strategy
+		}
+	}
+
 	function depositTokensIntoStrategies(
 		uint256 tokenId,
 		uint256[] memory amounts_
@@ -153,7 +172,6 @@ contract CardinalProtocolAssetAllocators is
 				amounts_
 			);
 		}
-
 	}
 
 
