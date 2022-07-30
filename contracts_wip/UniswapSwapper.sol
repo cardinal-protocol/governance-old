@@ -6,19 +6,19 @@ pragma solidity ^0.8.9;
 /* ========== [IMPORT] ========== */
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-
-
-/* ========== [IMPORT] Personal ========== */
-
-import "./interface/IUniswapV2Router.sol";
+import "@uniswap/v2-periphery/contracts/UniswapV2Router02.sol";
 
 
 /// @title
-contract tokenSwap {
+contract UniswapSwapper {
 	/* ========== [STATE VARIABLES] ========== */
 
     address private constant UNISWAP_V2_ROUTER = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
     address private constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+
+	fallback () public payable {
+    
+	}
 
     /// @notice this swap function is used to trade from one token to another
     /// @param _tokenIn Input token address (SwapOut)
@@ -47,11 +47,10 @@ contract tokenSwap {
 			_amountIn
 		);
 
-		// path is an array of addresses.
-		// this path array will have 3 addresses [tokenIn, WETH, tokenOut]
-		// the if statement below takes into account if token in or token out is WETH.  then the path is only 2 addresses
+		// path is an array of addresses & will have 3 addresses [tokenIn, WETH, tokenOut]
 		address[] memory path;
 
+		// the if statement below takes into account if token in or token out is WETH.  then the path is only 2 addresses
 		if (_tokenIn == WETH || _tokenOut == WETH) {
 			path = new address[](2);
 			path[0] = _tokenIn;
