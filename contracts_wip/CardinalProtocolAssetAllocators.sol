@@ -18,6 +18,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "./abstract/CardinalProtocolControl.sol";
 
 
+/// @title Cardinal Protocol Asset Allocators
 contract CardinalProtocolAssetAllocators is
 	ERC721Enumerable,
 	Pausable,
