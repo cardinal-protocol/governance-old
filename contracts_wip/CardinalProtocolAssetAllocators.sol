@@ -23,6 +23,24 @@ contract CardinalProtocolAssetAllocators is
 	Pausable,
 	CardinalProtocolControl
 {
+	/* ========== [EVENT] ========== */
+	event DepositedWETH(
+		uint256 CPAATokenId,
+		uint256 amount
+	);
+
+	event DepositedTokensIntoStrategy(
+		uint256 CPAATokenId,
+		uint64 strategy,
+		uint256[] amounts
+	);
+
+	event WithdrewTokensFromStrategy(
+		uint256 CPAATokenId,
+		uint64 strategy
+	);
+
+
 	/* ========== [DEPENDENCY] ========== */
 	using Counters for Counters.Counter;
 
@@ -46,7 +64,7 @@ contract CardinalProtocolAssetAllocators is
 	// Custom Types
 	Counters.Counter public _CPAATokenIdTracker;
 
-	string public _baseTokenURI;
+	string public baseURI;
 	address public _treasury;
 
 	// Strategy Id => Whitelisted Strategy
@@ -57,34 +75,16 @@ contract CardinalProtocolAssetAllocators is
 	mapping(uint256 => Guideline) _guidelines;
 
 
-	/* ========== [EVENT] ========== */
-	event DepositedWETH(
-		uint256 CPAATokenId,
-		uint256 amount
-	);
-
-	event DepositedTokensIntoStrategy(
-		uint256 CPAATokenId,
-		uint64 strategy,
-		uint256[] amounts
-	);
-
-	event WithdrewTokensFromStrategy(
-		uint256 CPAATokenId,
-		uint64 strategy
-	);
-
-
 	/* ========== [CONTRUCTOR] ========== */
 	constructor (
 		address cardinalProtocolAddress_,
-		string memory baseTokenURI_,
+		string memory baseURI_,
 		address treasury_
 	)
 		ERC721("Cardinal Protocol Asset Allocators", "CPAA")
 		CardinalProtocolControl(cardinalProtocolAddress_)
 	{
-		_baseTokenURI = baseTokenURI_;
+		baseURI = baseURI_;
 		_treasury = treasury_;
 	}
 
@@ -128,51 +128,63 @@ contract CardinalProtocolAssetAllocators is
 		whenNotPaused()
 		returns (string memory)
 	{
-		return _baseTokenURI;
+		return baseURI;
 	}
 
 
 	/* ========== [FUNCTION][MUTATIVE] ========== */
 	/**
-	* Auth Level: _chief
+	* ==========================
+	* === AUTH LEVEL: _chief ===
+	* ==========================
 	*/
-	/// @notice Set _baseTokenURI
-	function setBaseURI(string memory baseTokenURI) external authLevel_chief() {
-		_baseTokenURI = baseTokenURI;
-	}
-
-	/// @notice
-	function withdrawToTreasury() public authLevel_chief() {
-		uint balance = address(this).balance;
-		
-		payable(_treasury).transfer(balance);
+	/**
+	 * @notice Set _baseTokenURI
+	 * @param baseURI_ New base URI to be set
+	*/
+	function setBaseURI(string memory baseURI_) external authLevel_chief() {
+		baseURI = baseURI_;
 	}
 
 	/**
-	* Auth Level: _manager
+	 * @notice Pause contract
 	*/
-	/// @notice Pause contract
 	function pause() public
-		authLevel_manager()
+		authLevel_chief()
 		whenNotPaused()
 	{
 		// Call Pausable "_pause" function
 		super._pause();
 	}
 
-	/// @notice Unpause contract
+	/**
+	 * @notice Unpause contract
+	*/
 	function unpause() public
-		authLevel_manager()
-		whenNotPaused()
+		authLevel_chief()
+		whenPaused()
 	{
 		// Call Pausable "_unpause" function
 		super._unpause();
 	}
+
+	/**
+	 * @notice Deposit any ETH sent to this contract to _treasury
+	*/
+	function withdrawToTreasury() public authLevel_chief() {
+		uint balance = address(this).balance;
+		
+		payable(_treasury).transfer(balance);
+	}
 	
 	/**
-	* Auth Level: public
+	* ==========================
+	* === AUTH LEVEL: public ===
+	* ==========================
 	*/
-	function mint(address[] memory toSend, Guideline memory guideline_) public {
+	function mint(address[] memory toSend, Guideline memory guideline_) public
+		whenNotPaused()
+	{
 		// For each toSend, mint the NFT
 		for (uint i = 0; i < toSend.length; i++) {
 			// Mint token
@@ -188,6 +200,7 @@ contract CardinalProtocolAssetAllocators is
 
 	/// @notice Deposit WETH into this contract
 	function depositWETH(uint256 CPAATokenId, uint256 amount_) public payable
+		whenNotPaused()
 		auth_ownsNFT(CPAATokenId)
 	{
 		// [IERC20] Transfer WETH from caller to this contract
@@ -209,6 +222,7 @@ contract CardinalProtocolAssetAllocators is
 		uint256 CPAATokenId,
 		uint256[] memory amounts_
 	) public
+		whenNotPaused()
 		auth_ownsNFT(CPAATokenId)
 	{
 		// For each Strategy Allocation
@@ -217,8 +231,12 @@ contract CardinalProtocolAssetAllocators is
 			i < _guidelines[CPAATokenId].strategyAllocations.length;
 			i++
 		) {
-			// Deposit tokens
+			// Convert WETH to required tokens 
 			
+
+			// Deposit tokens
+			_WETHBalanceOf[CPAATokenId];
+
 			// [EMIT]
 			emit DepositedTokensIntoStrategy(
 				CPAATokenId,
