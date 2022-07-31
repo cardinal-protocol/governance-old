@@ -16,13 +16,15 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 /* ========== [IMPORT] ========== */
 import "./abstract/CardinalProtocolControl.sol";
+import "./abstract/UniswapSwapper.sol";
 
 
 /// @title Cardinal Protocol Asset Allocators
 contract CardinalProtocolAssetAllocators is
 	ERC721Enumerable,
 	Pausable,
-	CardinalProtocolControl
+	CardinalProtocolControl,
+	UniswapSwapper
 {
 	/* ========== [EVENT] ========== */
 	event DepositedWETH(

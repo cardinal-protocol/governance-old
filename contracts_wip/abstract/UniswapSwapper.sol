@@ -17,7 +17,7 @@ abstract contract UniswapSwapper {
 
 	/* ========== [OVERRIDE][FUNCTION][VIEW] ========== */
 	/**
-	* @notice this function will return the minimum amount from a swap
+	* @notice This function will return the minimum amount from a swap
 	* @param _tokenIn Input token address (Swap out of)
 	* @param _tokenOut Output token address (Swap in to)
 	* @param _amountIn The amount of tokens being sent in
@@ -34,7 +34,8 @@ abstract contract UniswapSwapper {
 			path = new address[](2);
 			path[0] = _tokenIn;
 			path[1] = _tokenOut;
-		} else {
+		}
+		else {
 			path = new address[](3);
 			path[0] = _tokenIn;
 			path[1] = WETH;
