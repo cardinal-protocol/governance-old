@@ -6,6 +6,8 @@ pragma solidity ^0.8.9;
 /* ========== [IMPORT] ========== */
 // @openzeppelin/contracts/interfaces
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
+// @openzeppelin/contracts/security
+import "@openzeppelin/contracts/security/Pausable.sol";
 // @openzeppelin/contracts/token
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 // @openzeppelin/contracts/utils
@@ -18,6 +20,7 @@ import "./abstract/CardinalProtocolControl.sol";
 
 contract CardinalProtocolAssetAllocators is
 	ERC721Enumerable,
+	Pausable,
 	CardinalProtocolControl
 {
 	/* ========== [DEPENDENCY] ========== */
@@ -55,7 +58,7 @@ contract CardinalProtocolAssetAllocators is
 
 
 	/* ========== [EVENT] ========== */
-	event DepositedEther(
+	event DepositedWETH(
 		uint256 CPAATokenId,
 		uint256 amount
 	);
@@ -98,8 +101,11 @@ contract CardinalProtocolAssetAllocators is
 	}
 	
 	
-	/* ========== [OVERRIDE][FUNCTION][REQUIRED] ========== */
-	function _burn(uint256 CPAATokenId) internal virtual override(ERC721) {
+	/* ========== [OVERRIDE][FUNCTION] ========== */
+	function _burn(uint256 CPAATokenId) internal
+		override(ERC721)
+		whenNotPaused()
+	{
 		// Distribute the tokens that are being yield farmed
 
 		for (uint256 i = 0; i < _guidelines[CPAATokenId].strategyAllocations.length; i++) {
@@ -115,28 +121,57 @@ contract CardinalProtocolAssetAllocators is
 		return ERC721._burn(CPAATokenId);
 	}
 
-	// Return the full URI of a token
-	function tokenURI(uint256 CPAATokenId) public view
-		override(ERC721)
-		returns (string memory)
-	{
-		return ERC721.tokenURI(CPAATokenId);
-	}
-
 
 	/* ========== [OVERRIDE][FUNCTION][VIEW] ========== */
-	function _baseURI() internal view virtual override returns (string memory) {
+	function _baseURI() internal view
+		override(ERC721)
+		whenNotPaused()
+		returns (string memory)
+	{
 		return _baseTokenURI;
 	}
 
 
-	/* ========== [FUNCTION][SELF-IMPLEMENTATION] ========== */
+	/* ========== [FUNCTION][MUTATIVE] ========== */
+	/**
+	* Auth Level: _chief
+	*/
+	/// @notice Set _baseTokenURI
 	function setBaseURI(string memory baseTokenURI) external authLevel_chief() {
 		_baseTokenURI = baseTokenURI;
 	}
 
+	/// @notice
+	function withdrawToTreasury() public authLevel_chief() {
+		uint balance = address(this).balance;
+		
+		payable(_treasury).transfer(balance);
+	}
 
-	/* ========== [FUNCTION][MUTATIVE] ========== */
+	/**
+	* Auth Level: _manager
+	*/
+	/// @notice Pause contract
+	function pause() public
+		authLevel_manager()
+		whenNotPaused()
+	{
+		// Call Pausable "_pause" function
+		super._pause();
+	}
+
+	/// @notice Unpause contract
+	function unpause() public
+		authLevel_manager()
+		whenNotPaused()
+	{
+		// Call Pausable "_unpause" function
+		super._unpause();
+	}
+	
+	/**
+	* Auth Level: public
+	*/
 	function mint(address[] memory toSend, Guideline memory guideline_) public {
 		// For each toSend, mint the NFT
 		for (uint i = 0; i < toSend.length; i++) {
@@ -155,20 +190,22 @@ contract CardinalProtocolAssetAllocators is
 	function depositWETH(uint256 CPAATokenId, uint256 amount_) public payable
 		auth_ownsNFT(CPAATokenId)
 	{
+		// [IERC20] Transfer WETH from caller to this contract
 		IERC20(WETH).transferFrom(
 			msg.sender,
 			address(this),
 			amount_
 		);
 
-		// Increment _WETHBalanceOf
+		// [ADD] _WETHBalanceOf
 		_WETHBalanceOf[CPAATokenId] = _WETHBalanceOf[CPAATokenId] + amount_;
 
 		// [EMIT]
-		emit DepositedEther(CPAATokenId, amount_);
+		emit DepositedWETH(CPAATokenId, amount_);
 	}
 
-	function depositTokensIntoStrategies(
+	/// @notice Deposit WETH into strategies following guidelines 
+	function deployWETHByGuidelines(
 		uint256 CPAATokenId,
 		uint256[] memory amounts_
 	) public
@@ -189,13 +226,5 @@ contract CardinalProtocolAssetAllocators is
 				amounts_
 			);
 		}
-	}
-
-
-	/* ========== [FUNCTION][OTHER] ========== */
-	function withdrawToTreasury() public authLevel_chief() {
-		uint balance = address(this).balance;
-		
-		payable(_treasury).transfer(balance);
 	}
 }
