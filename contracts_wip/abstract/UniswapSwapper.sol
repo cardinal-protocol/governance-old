@@ -4,13 +4,12 @@ pragma solidity ^0.8.9;
 
 
 /* ========== [IMPORT] ========== */
-
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/v2-periphery/contracts/UniswapV2Router02.sol";
 
 
 /// @title UniswapSwapper
-contract UniswapSwapper {
+abstract contract UniswapSwapper {
 	/* ========== [STATE VARIABLES] ========== */
     address private constant UNISWAP_V2_ROUTER = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
     address private constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
@@ -81,7 +80,7 @@ contract UniswapSwapper {
 		// path is an array of addresses & will have 3 addresses [tokenIn, WETH, tokenOut]
 		address[] memory path;
 
-		// the if statement below takes into account if token in or token out is WETH.  then the path is only 2 addresses
+		// the if statement below takes into account if token in or token out is WETH. then the path is only 2 addresses
 		if (_tokenIn == WETH || _tokenOut == WETH) {
 			path = new address[](2);
 			path[0] = _tokenIn;
@@ -94,9 +93,7 @@ contract UniswapSwapper {
 			path[2] = _tokenOut;
 		}
 
-		// then we will call swapExactTokensForTokens
-		// for the deadline we will pass in block.timestamp
-		// the deadline is the latest time the trade is valid for
+		// [ICALL] Swap tokens
         IUniswapV2Router(UNISWAP_V2_ROUTER).swapExactTokensForTokens(
 			_amountIn,
 			_amountOutMin,
