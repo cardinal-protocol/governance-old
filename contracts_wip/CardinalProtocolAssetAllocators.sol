@@ -19,7 +19,9 @@ import "./abstract/CardinalProtocolControl.sol";
 import "./abstract/UniswapSwapper.sol";
 
 
-/// @title Cardinal Protocol Asset Allocators
+/// @title Cardinal Protocol Asset Allocators V1 (CPAA)
+/// @notice Automated Strategy Allocator Protocol
+/// @author harpoonjs.eth
 contract CardinalProtocolAssetAllocators is
 	ERC721Enumerable,
 	Pausable,
@@ -57,10 +59,6 @@ contract CardinalProtocolAssetAllocators is
 	struct Guideline {
 		StrategyAllocation[] strategyAllocations;
 	}
-	
-
-	/* ========== [STATE VARIABLE][CONSTANT] ========== */
-    address private constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
 
 
 	/* ========== [STATE VARIABLE] ========== */
