@@ -228,14 +228,15 @@ contract CardinalProtocolAssetAllocators is
 		whenNotPaused()
 		auth_ownsNFT(CPAATokenId)
 	{
+		// Retrieve _guidelines for the token
+		Guideline g = _guidelines[CPAATokenId];
+
 		// For each Strategy Allocation
-		for (
-			uint i = 0;
-			i < _guidelines[CPAATokenId].strategyAllocations.length;
-			i++
-		) {
+		for (uint i = 0; i < g.strategyAllocations.length; i++) {
+			// Calculate amount to convert
+			uint256 amountToConvert = g.strategyAllocations[i].pct * _WETHBalanceOf[CPAATokenId];
+
 			// Convert WETH to required tokens 
-			
 
 			// Deposit tokens
 			_WETHBalanceOf[CPAATokenId];
@@ -247,5 +248,8 @@ contract CardinalProtocolAssetAllocators is
 				amounts_
 			);
 		}
+
+		// Reset balance
+		_WETHBalanceOf[CPAATokenId] = 0;
 	}
 }
