@@ -91,7 +91,7 @@ contract CardinalProtocolAssetAllocators is
 
 
 	/* ========== [MODIFIER] ========== */
-	modifier auth_ownsNFT(uint256 CPAATokenId) {
+	modifier auth_ownsCPAA(uint256 CPAATokenId) {
 		// Check if the wallet owns the assetAllocatorId
 		require(
 			ownerOf(CPAATokenId) == msg.sender,
@@ -202,7 +202,7 @@ contract CardinalProtocolAssetAllocators is
 	/// @notice Deposit WETH into this contract
 	function depositWETH(uint256 CPAATokenId, uint256 amount_) public payable
 		whenNotPaused()
-		auth_ownsNFT(CPAATokenId)
+		auth_ownsCPAA(CPAATokenId)
 	{
 		// [IERC20] Transfer WETH from caller to this contract
 		IERC20(WETH).transferFrom(
@@ -224,7 +224,7 @@ contract CardinalProtocolAssetAllocators is
 		uint256[] memory amounts_
 	) public
 		whenNotPaused()
-		auth_ownsNFT(CPAATokenId)
+		auth_ownsCPAA(CPAATokenId)
 	{
 		// Retrieve _guidelines for the token
 		Guideline g = _guidelines[CPAATokenId];
