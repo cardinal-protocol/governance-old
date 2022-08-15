@@ -44,6 +44,7 @@ abstract contract Strategy is CardinalProtocolControl {
 	}
 
 	/* ========== [MODIFIERS] ========== */
+	/// @notice Auth Level _keeper
 	modifier authLevel_keeper() {
 		require(
 			ICardinalProtocol(_cardinalProtocolAddress).authLevel_manager(msg.sender)
@@ -55,12 +56,14 @@ abstract contract Strategy is CardinalProtocolControl {
 		_;
 	}
 
+	/// @notice Auth CPAA
 	modifier auth_CPAA() {
 		require(CPAA == msg.sender, "!auth");
 
 		_;
 	}
 
+	/// @notice Must be active
 	modifier active() {
 		require(_active, "Strategy is not active");
 
@@ -77,22 +80,30 @@ abstract contract Strategy is CardinalProtocolControl {
 	}
 
 	/**
-	* Auth Level: _keeper
+	* Auth Level: _admin
 	*/
+	/// @notice Set name of strategy
+	/// @param name_ New name to be assigned
 	function set_name(string memory name_) public
 		virtual
-		authLevel_keeper()
+		authLevel_admin()
 	{
 		_name = name_;
 	}
 
+	/// @notice Set tokensRequired
+	/// @param tokensRequired_ New name to be assigned
 	function set_tokensRequired(address[] memory tokensRequired_) public
 		virtual
-		authLevel_keeper()
+		authLevel_admin()
 	{
 		_tokensRequired = tokensRequired_;
 	}
 
+	/**
+	* Auth Level: _keeper
+	*/
+	/// @notice Toggle active
 	function toggleActive() public
 		virtual
 		authLevel_keeper()
