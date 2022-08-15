@@ -5,7 +5,7 @@ pragma solidity ^0.8.9;
 
 
 /* ========== [IMPORT][PERSONAl] ========== */
-import "../abstract/CardinalProtocolControl.sol";
+import "./CardinalProtocolControl.sol";
 
 
 abstract contract Strategy is CardinalProtocolControl {
@@ -36,17 +36,18 @@ abstract contract Strategy is CardinalProtocolControl {
 	constructor (
 		address _CPAA,
 		string memory name_,
-		address[] memory tokensUsed_
+		address[] memory tokensRequired_
 	) {
 		CPAA = _CPAA;
 		_name = name_;
-		_tokensRequired = tokensUsed_;
+		_tokensRequired = tokensRequired_;
 	}
 
 	/* ========== [MODIFIERS] ========== */
 	modifier authLevel_keeper() {
 		require(
-			ICardinalProtocol(_cardinalProtocolAddress).authLevel_manager(msg.sender) ||
+			ICardinalProtocol(_cardinalProtocolAddress).authLevel_manager(msg.sender)
+			||
 			_keeper == msg.sender,
 			"!auth"
 		);
@@ -54,7 +55,7 @@ abstract contract Strategy is CardinalProtocolControl {
 		_;
 	}
 
-	modifier auth_assetAllocator() {
+	modifier auth_CPAA() {
 		require(CPAA == msg.sender, "!auth");
 
 		_;
@@ -68,14 +69,14 @@ abstract contract Strategy is CardinalProtocolControl {
 
 
 	/* ========== [FUNCTIONS][MUTATIVE] ========== */
-	/*
+	/**
 	* Auth Level: _manager
 	*/
 	function set_keeper(address keeper_) public authLevel_manager() {
 		_keeper = keeper_;
 	}
 
-	/*
+	/**
 	* Auth Level: _keeper
 	*/
 	function set_name(string memory name_) public
@@ -85,11 +86,11 @@ abstract contract Strategy is CardinalProtocolControl {
 		_name = name_;
 	}
 
-	function set_tokensRequired(address[] memory tokensUsed_) public
+	function set_tokensRequired(address[] memory tokensRequired_) public
 		virtual
 		authLevel_keeper()
 	{
-		_tokensRequired = tokensUsed_;
+		_tokensRequired = tokensRequired_;
 	}
 
 	function toggleActive() public
@@ -103,28 +104,27 @@ abstract contract Strategy is CardinalProtocolControl {
 	* Auth: _cardinalProtocolAssetAllocatorsAddress
 	*/
 	function create_deposits(
-		uint64 assetAllocatorTokenId,
+		uint64 CPAATokenId,
 		uint64[] memory amounts
 	) external
 		virtual
-		auth_assetAllocator()
+		auth_CPAA()
 		active()
 	{
 		// Create a deposit
 	}
 
 	function create_withdrawalRequests(
-		uint64 assetAllocatorTokenId,
+		uint64 CPAATokenId,
 		uint64[] memory amounts
 	) external
-		auth_assetAllocator()
+		auth_CPAA()
 	{
 		// Create a withdrawl Request
 	}
 
 
 	/* ========== [FUNCTIONS][NON-MUTATIVE] ========== */
-
 	function tokensRequired() public view virtual returns (address[] memory) {
 		return _tokensRequired;
 	}
