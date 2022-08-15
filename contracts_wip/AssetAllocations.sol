@@ -16,8 +16,8 @@ import "./abstract/CardinalProtocolControl.sol";
 import "./abstract/UniswapSwapper.sol";
 
 
-/// @title Cardinal Protocol Asset Allocators V1 (CPAA)
-/// @notice Automated Strategy Allocator Protocol
+/// @title Cardinal Protocol Asset Allocators (CPAA)
+/// @notice Asset Management Protocol
 /// @author harpoonjs.eth
 contract AssetAllocations is
 	Pausable,
@@ -55,6 +55,7 @@ contract AssetAllocations is
 
 
 	/* ========== [MODIFIER] ========== */
+	/// @notice Check if msg.sender owns the CPAA
 	modifier auth_ownsCPAA(uint256 CPAATokenId) {
 		// Check if the wallet owns the assetAllocatorId
 		require(
@@ -66,8 +67,11 @@ contract AssetAllocations is
 	}
 
 
+	/* ========== [FUNCTION] ========== */
 	/// @notice Deposit WETH into this contract
-	function depositWETH(uint256 CPAATokenId, uint256 amount_) public payable
+	/// @param CPAATokenId CPAA Token Id
+	/// @param amount Amount that is to be deposited
+	function depositWETH(uint256 CPAATokenId, uint256 amount) public payable
 		whenNotPaused()
 		auth_ownsCPAA(CPAATokenId)
 	{
@@ -75,14 +79,43 @@ contract AssetAllocations is
 		IERC20(WETH).transferFrom(
 			msg.sender,
 			address(this),
-			amount_
+			amount
 		);
 
 		// [ADD] _WETHBalanceOf
-		_WETHBalanceOf[CPAATokenId] = _WETHBalanceOf[CPAATokenId] + amount_;
+		_WETHBalanceOf[CPAATokenId] = _WETHBalanceOf[CPAATokenId] + amount;
 
 		// [EMIT]
-		emit DepositedWETH(CPAATokenId, amount_);
+		emit DepositedWETH(CPAATokenId, amount);
+	}
+
+	/// @notice Withdraw WETH
+	/// @param CPAATokenId Cardinal Protocol Asset Allocator Token Id
+	/// @param amount Amount that is to be withdrawn
+	function withdrawWETH(uint256 CPAATokenId, uint256 amount) public payable {
+		require(_WETHBalanceOf[CPAATokenId] >= amount, "You do not have enough WETH");
+
+		IERC20(WETH).transferFrom(
+			address(this),
+			msg.sender,
+			amount
+		);
+
+		// [SUBTRACT] _WETHBalanceOf
+		_WETHBalanceOf[CPAATokenId] = _WETHBalanceOf[CPAATokenId] - amount;
+	}
+
+	/// @notice Withdraw All WETH
+	/// @param CPAATokenId Cardinal Protocol Asset Allocator Token Id
+	function withdrawAllWETH(uint256 CPAATokenId) public payable {
+		IERC20(WETH).transferFrom(
+			address(this),
+			msg.sender,
+			_WETHBalanceOf[CPAATokenId]
+		);
+
+		// [SUBTRACT] _WETHBalanceOf
+		_WETHBalanceOf[CPAATokenId] = 0;
 	}
 
 	/// @notice Deposit WETH into strategies following guidelines 
