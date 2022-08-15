@@ -23,6 +23,7 @@ abstract contract Strategy is CardinalProtocolControl {
 
 	/* ========== [STATE-VARIABLES] ========== */
 	address public CPAA;
+	
 	address public _keeper;
 	string public _name;
 	bool public _active = false;
@@ -57,7 +58,7 @@ abstract contract Strategy is CardinalProtocolControl {
 	}
 
 	/// @notice Auth CPAA
-	modifier auth_CPAA() {
+	modifier authCPAA() {
 		require(CPAA == msg.sender, "!auth");
 
 		_;
@@ -73,14 +74,9 @@ abstract contract Strategy is CardinalProtocolControl {
 
 	/* ========== [FUNCTIONS][MUTATIVE] ========== */
 	/**
-	* Auth Level: _manager
-	*/
-	function set_keeper(address keeper_) public authLevel_manager() {
-		_keeper = keeper_;
-	}
-
-	/**
-	* Auth Level: _admin
+	* ==========================
+	* === AUTH LEVEL: _admin ===
+	* ==========================
 	*/
 	/// @notice Set name of strategy
 	/// @param name_ New name to be assigned
@@ -101,7 +97,18 @@ abstract contract Strategy is CardinalProtocolControl {
 	}
 
 	/**
-	* Auth Level: _keeper
+	* ============================
+	* === AUTH LEVEL: _manager ===
+	* ============================
+	*/
+	function set_keeper(address keeper_) public authLevel_manager() {
+		_keeper = keeper_;
+	}
+
+	/**
+	* ===========================
+	* === AUTH LEVEL: _keeper ===
+	* ===========================
 	*/
 	/// @notice Toggle active
 	function toggleActive() public
@@ -111,8 +118,10 @@ abstract contract Strategy is CardinalProtocolControl {
 		_active = !_active;
 	}
 
-	/*
-	* Auth: _cardinalProtocolAssetAllocatorsAddress
+	/**
+	* ==================
+	* === AUTH: CPAA ===
+	* ==================
 	*/
 	/// @notice
 	function create_deposits(
@@ -120,7 +129,7 @@ abstract contract Strategy is CardinalProtocolControl {
 		uint64[] memory amounts
 	) external
 		virtual
-		auth_CPAA()
+		authCPAA()
 		active()
 	{
 		// Create a deposit
@@ -131,7 +140,7 @@ abstract contract Strategy is CardinalProtocolControl {
 		uint64 CPAATokenId,
 		uint64[] memory amounts
 	) external
-		auth_CPAA()
+		authCPAA()
 	{
 		// Create a withdrawl Request
 	}

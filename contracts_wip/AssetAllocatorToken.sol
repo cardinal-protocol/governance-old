@@ -19,9 +19,11 @@ import "./abstract/CardinalProtocolControl.sol";
 import "./abstract/UniswapSwapper.sol";
 
 
-/// @title Cardinal Protocol - Asset Allocator Token
-/// @notice Asset Management Protocol
-/// @author harpoonjs.eth
+/**
+ * @title Cardinal Protocol - Asset Allocator Token
+ * @notice Asset Management Protocol
+ * @author harpoonjs.eth
+*/
 contract AssetAllocatorToken is
 	ERC721Enumerable,
 	Pausable,
@@ -42,12 +44,12 @@ contract AssetAllocatorToken is
 
 	/* ========== [CONTRUCTOR] ========== */
 	constructor (
-		address cardinalProtocolAddress_,
+		address cardinalProtocolAddress,
 		string memory baseURI_,
 		address treasury_
 	)
-		ERC721("Cardinal Protocol Asset Allocator Tokens", "CPAA")
-		CardinalProtocolControl(cardinalProtocolAddress_)
+		ERC721("Cardinal Protocol Asset Allocator Token", "CPAA")
+		CardinalProtocolControl(cardinalProtocolAddress)
 	{
 		baseURI = baseURI_;
 		_treasury = treasury_;
@@ -59,7 +61,6 @@ contract AssetAllocatorToken is
 		override(ERC721)
 		whenNotPaused()
 	{
-
 		return ERC721._burn(CPAATokenId);
 	}
 
