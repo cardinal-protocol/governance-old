@@ -30,6 +30,11 @@ contract AssetAllocations is
 		uint256 amount
 	);
 
+	event WithdrewWETH(
+		uint256 CPAATokenId,
+		uint256 amount
+	);
+
 	event DepositedTokensIntoStrategy(
 		uint256 CPAATokenId,
 		uint64 strategy,
@@ -103,6 +108,9 @@ contract AssetAllocations is
 
 		// [SUBTRACT] _WETHBalanceOf
 		_WETHBalanceOf[CPAATokenId] = _WETHBalanceOf[CPAATokenId] - amount;
+
+		// [EMIT]
+		emit WithdrewWETH(CPAATokenId, amount);
 	}
 
 	/// @notice Withdraw All WETH
@@ -137,28 +145,8 @@ contract AssetAllocations is
 		_WETHBalanceOf[CPAATokenId] = 0;
 	}
 
-	function cashOut(CPAATokenId) public
+	function withdrawTokensFromStrategies(CPAATokenId) public
 		auth_ownsCPAA(CPAATokenId)
 	{
-		// Distribute the tokens that are being yield farmed
-		for (uint256 i = 0; i < _guidelines[CPAATokenId].strategyAllocations.length; i++) {
-			// Withdraw tokens
-
-			// [EMIT]
-			emit WithdrewTokensFromStrategy(
-				CPAATokenId,
-				_guidelines[CPAATokenId].strategyAllocations[i].id
-			);
-		}
-	}
-
-	function unnamed(CPAATokenId) public
-		auth_ownsCPAA(CPAATokenId)
-	{
-		// _guidelines NOT existent 
-		if (!_guidelines[CPAATokenId]) {
-			// Create _guidelines
-			_guidelines[_CPAATokenIdTracker.current()] = guideline_;
-		}
 	}
 }
