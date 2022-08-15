@@ -150,6 +150,5 @@ contract AssetAllocations is
 	/// @param CPAATokenId CPAA Token Id
 	function withdrawTokensFromStrategies(CPAATokenId) public
 		auth_ownsCPAA(CPAATokenId)
-	{
-	}
+	{}
 }
