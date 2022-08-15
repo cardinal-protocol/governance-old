@@ -10,50 +10,40 @@ import "../abstract/CardinalProtocolControl.sol";
 
 abstract contract Strategy is CardinalProtocolControl {
 	/* ========== [STRUCTS] ========== */
-	struct Deposite {
-		uint64 assetAllocatorTokenId;
+	struct Deposit {
+		uint64 CPAATokenId;
 		address[] amounts;
 	}
 
 	struct WithdrawalRequest {
-		uint64 assetAllocatorTokenId;
+		uint64 CPAATokenId;
 		address[] amounts;
 	}
 
 
 	/* ========== [STATE-VARIABLES] ========== */
-	address public _cardinalProtocolAssetAllocatorsAddress;
+	address public CPAA;
 	address public _keeper;
-	
 	string public _name;
-	
 	bool public _active = false;
-
-	address[] public _tokensUsed;
-
-	Deposite[] _deposits;
-	
+	address[] public _tokensRequired;
+	Deposit[] _deposits;
 	WithdrawalRequest[] _withdrawalRequests;
-
 	mapping(address => uint64) _deployedBalances;
 
 
 	/* ========== [CONSTRUCTOR] ========== */
 	constructor (
-		address cardinalProtocolAssetAllocatorsAddress_,
-		address keeper_,
+		address _CPAA,
 		string memory name_,
 		address[] memory tokensUsed_
 	) {
-		_cardinalProtocolAssetAllocatorsAddress = cardinalProtocolAssetAllocatorsAddress_;
-
-		_keeper = keeper_;
-
+		CPAA = _CPAA;
 		_name = name_;
-		_tokensUsed = tokensUsed_;
-
+		_tokensRequired = tokensUsed_;
 	}
 
+	/* ========== [MODIFIERS] ========== */
 	modifier authLevel_keeper() {
 		require(
 			ICardinalProtocol(_cardinalProtocolAddress).authLevel_manager(msg.sender) ||
@@ -65,7 +55,7 @@ abstract contract Strategy is CardinalProtocolControl {
 	}
 
 	modifier auth_assetAllocator() {
-		require(_cardinalProtocolAssetAllocatorsAddress == msg.sender, "!auth");
+		require(CPAA == msg.sender, "!auth");
 
 		_;
 	}
@@ -78,7 +68,6 @@ abstract contract Strategy is CardinalProtocolControl {
 
 
 	/* ========== [FUNCTIONS][MUTATIVE] ========== */
-
 	/*
 	* Auth Level: _manager
 	*/
@@ -96,11 +85,11 @@ abstract contract Strategy is CardinalProtocolControl {
 		_name = name_;
 	}
 
-	function set_tokensUsed(address[] memory tokensUsed_) public
+	function set_tokensRequired(address[] memory tokensUsed_) public
 		virtual
 		authLevel_keeper()
 	{
-		_tokensUsed = tokensUsed_;
+		_tokensRequired = tokensUsed_;
 	}
 
 	function toggleActive() public
@@ -136,7 +125,7 @@ abstract contract Strategy is CardinalProtocolControl {
 
 	/* ========== [FUNCTIONS][NON-MUTATIVE] ========== */
 
-	function tokensUsed() public view virtual returns (address[] memory) {
-		return _tokensUsed;
+	function tokensRequired() public view virtual returns (address[] memory) {
+		return _tokensRequired;
 	}
 }
