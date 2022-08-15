@@ -114,6 +114,7 @@ abstract contract Strategy is CardinalProtocolControl {
 	/*
 	* Auth: _cardinalProtocolAssetAllocatorsAddress
 	*/
+	/// @notice
 	function create_deposits(
 		uint64 CPAATokenId,
 		uint64[] memory amounts
@@ -125,6 +126,7 @@ abstract contract Strategy is CardinalProtocolControl {
 		// Create a deposit
 	}
 
+	/// @notice
 	function create_withdrawalRequests(
 		uint64 CPAATokenId,
 		uint64[] memory amounts
@@ -136,6 +138,7 @@ abstract contract Strategy is CardinalProtocolControl {
 
 
 	/* ========== [FUNCTIONS][NON-MUTATIVE] ========== */
+	/// @notice Return tokens required
 	function tokensRequired() public view virtual returns (address[] memory) {
 		return _tokensRequired;
 	}
