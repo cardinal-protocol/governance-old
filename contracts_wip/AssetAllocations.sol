@@ -50,7 +50,7 @@ contract AssetAllocations is
 	/* ========== [STATE VARIABLE] ========== */
 	mapping(uint64 => address) _whitelistedStrategyAddresses;
 
-	mapping(uint256 => uint256) _WETHBalanceOf;
+	mapping(uint256 => uint256) _WETHBalances;
 
 
 	/* ========== [CONTRUCTOR] ========== */
@@ -61,6 +61,7 @@ contract AssetAllocations is
 
 	/* ========== [MODIFIER] ========== */
 	/// @notice Check if msg.sender owns the CPAA
+	/// @param CPAATokenId CPAA Token Id
 	modifier auth_ownsCPAA(uint256 CPAATokenId) {
 		// Check if the wallet owns the assetAllocatorId
 		require(
@@ -87,18 +88,18 @@ contract AssetAllocations is
 			amount
 		);
 
-		// [ADD] _WETHBalanceOf
-		_WETHBalanceOf[CPAATokenId] = _WETHBalanceOf[CPAATokenId] + amount;
+		// [ADD] _WETHBalances
+		_WETHBalances[CPAATokenId] = _WETHBalances[CPAATokenId] + amount;
 
 		// [EMIT]
 		emit DepositedWETH(CPAATokenId, amount);
 	}
 
 	/// @notice Withdraw WETH
-	/// @param CPAATokenId Cardinal Protocol Asset Allocator Token Id
+	/// @param CPAATokenId CPAA Token Id
 	/// @param amount Amount that is to be withdrawn
 	function withdrawWETH(uint256 CPAATokenId, uint256 amount) public payable {
-		require(_WETHBalanceOf[CPAATokenId] >= amount, "You do not have enough WETH");
+		require(_WETHBalances[CPAATokenId] >= amount, "You do not have enough WETH");
 
 		IERC20(WETH).transferFrom(
 			address(this),
@@ -106,27 +107,28 @@ contract AssetAllocations is
 			amount
 		);
 
-		// [SUBTRACT] _WETHBalanceOf
-		_WETHBalanceOf[CPAATokenId] = _WETHBalanceOf[CPAATokenId] - amount;
+		// [SUBTRACT] _WETHBalances
+		_WETHBalances[CPAATokenId] = _WETHBalances[CPAATokenId] - amount;
 
 		// [EMIT]
 		emit WithdrewWETH(CPAATokenId, amount);
 	}
 
 	/// @notice Withdraw All WETH
-	/// @param CPAATokenId Cardinal Protocol Asset Allocator Token Id
+	/// @param CPAATokenId CPAA Token Id
 	function withdrawAllWETH(uint256 CPAATokenId) public payable {
 		IERC20(WETH).transferFrom(
 			address(this),
 			msg.sender,
-			_WETHBalanceOf[CPAATokenId]
+			_WETHBalances[CPAATokenId]
 		);
 
-		// [SUBTRACT] _WETHBalanceOf
-		_WETHBalanceOf[CPAATokenId] = 0;
+		// [SUBTRACT] _WETHBalances
+		_WETHBalances[CPAATokenId] = 0;
 	}
 
 	/// @notice Deposit WETH into strategies following guidelines 
+	/// @param CPAATokenId CPAA Token Id
 	function deployWETHToStrategy(
 		uint256 CPAATokenId,
 		uint64 strategyId
@@ -142,9 +144,10 @@ contract AssetAllocations is
 		);
 
 		// Reset balance
-		_WETHBalanceOf[CPAATokenId] = 0;
+		_WETHBalances[CPAATokenId] = 0;
 	}
 
+	/// @param CPAATokenId CPAA Token Id
 	function withdrawTokensFromStrategies(CPAATokenId) public
 		auth_ownsCPAA(CPAATokenId)
 	{
