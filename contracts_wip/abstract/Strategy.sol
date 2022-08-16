@@ -1,36 +1,27 @@
 // contracts/example/Strategy.sol
 // SPDX-License-Identifier: MIT
-
 pragma solidity ^0.8.9;
 
 
-/* ========== [IMPORT][PERSONAl] ========== */
+/* ========== [IMPORT][PERSONAL] ========== */
 import "./CardinalProtocolControl.sol";
 
 
 abstract contract Strategy is CardinalProtocolControl {
-	/* ========== [STRUCTS] ========== */
-	struct Deposit {
-		uint64 CPAATokenId;
-		address[] amounts;
-	}
-
-	struct WithdrawalRequest {
-		uint64 CPAATokenId;
-		address[] amounts;
-	}
-
-
-	/* ========== [STATE-VARIABLES] ========== */
+	/* ========== [STATE-VARIABLE] ========== */
 	address public CPAA;
 	
 	address public _keeper;
+	
 	string public _name;
+
 	bool public _active = false;
+	
 	address[] public _tokensRequired;
-	Deposit[] _deposits;
-	WithdrawalRequest[] _withdrawalRequests;
-	mapping(address => uint64) _deployedBalances;
+
+	mapping(uint256 => uint256) _deposits;
+	mapping(uint256 => uint256) _deployedBalances;
+	mapping(uint256 => uint256) _withdrawRequests;
 
 
 	/* ========== [CONSTRUCTOR] ========== */
@@ -44,7 +35,7 @@ abstract contract Strategy is CardinalProtocolControl {
 		_tokensRequired = tokensRequired_;
 	}
 
-	/* ========== [MODIFIERS] ========== */
+	/* ========== [MODIFIER] ========== */
 	/// @notice Auth Level _keeper
 	modifier authLevel_keeper() {
 		require(
@@ -72,7 +63,7 @@ abstract contract Strategy is CardinalProtocolControl {
 	}
 
 
-	/* ========== [FUNCTIONS][MUTATIVE] ========== */
+	/* ========== [FUNCTION][MUTATIVE] ========== */
 	/**
 	* ==========================
 	* === AUTH LEVEL: _admin ===
@@ -146,7 +137,7 @@ abstract contract Strategy is CardinalProtocolControl {
 	}
 
 
-	/* ========== [FUNCTIONS][NON-MUTATIVE] ========== */
+	/* ========== [FUNCTION][NON-MUTATIVE] ========== */
 	/// @notice Return tokens required
 	function tokensRequired() public view virtual returns (address[] memory) {
 		return _tokensRequired;
