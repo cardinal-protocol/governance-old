@@ -17,22 +17,24 @@ abstract contract Strategy is CardinalProtocolControl {
 
 	bool public _active = false;
 	
-	address[] public _tokensRequired;
+	address[] public _acceptedTokens;
 
-	mapping(uint256 => uint256) _deposits;
-	mapping(uint256 => uint256) _deployedBalances;
-	mapping(uint256 => uint256) _withdrawRequests;
+	// CPAA => { Accepted Token Addresse => Deposit Balance }
+	mapping (uint256 => mapping (address => uint256)) _deposits;
+	
+	mapping (uint256 => uint256) _deployedBalances;
+	mapping (uint256 => uint256) _withdrawRequests;
 
 
 	/* ========== [CONSTRUCTOR] ========== */
 	constructor (
 		address _CPAA,
 		string memory name_,
-		address[] memory tokensRequired_
+		address[] memory acceptedTokens_
 	) {
 		CPAA = _CPAA;
 		_name = name_;
-		_tokensRequired = tokensRequired_;
+		_acceptedTokens = acceptedTokens_;
 	}
 
 	/* ========== [MODIFIER] ========== */
@@ -78,13 +80,13 @@ abstract contract Strategy is CardinalProtocolControl {
 		_name = name_;
 	}
 
-	/// @notice Set tokensRequired
-	/// @param tokensRequired_ New name to be assigned
-	function set_tokensRequired(address[] memory tokensRequired_) public
+	/// @notice Set acceptedTokens
+	/// @param acceptedTokens_ New name to be assigned
+	function set_acceptedTokens(address[] memory acceptedTokens_) public
 		virtual
 		authLevel_admin()
 	{
-		_tokensRequired = tokensRequired_;
+		_acceptedTokens = acceptedTokens_;
 	}
 
 	/**
@@ -139,7 +141,7 @@ abstract contract Strategy is CardinalProtocolControl {
 
 	/* ========== [FUNCTION][NON-MUTATIVE] ========== */
 	/// @notice Return tokens required
-	function tokensRequired() public view virtual returns (address[] memory) {
-		return _tokensRequired;
+	function acceptedTokens() public view virtual returns (address[] memory) {
+		return _acceptedTokens;
 	}
 }
