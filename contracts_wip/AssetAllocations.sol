@@ -48,9 +48,8 @@ contract AssetAllocations is
 
 
 	/* ========== [STATE VARIABLE] ========== */
-	mapping(uint64 => address) _whitelistedStrategyAddresses;
-
-	mapping(uint256 => uint256) _WETHBalances;
+	mapping (uint64 => address) _whitelistedStrategyAddresses;
+	mapping (uint256 => uint256) _WETHBalances;
 
 
 	/* ========== [CONTRUCTOR] ========== */

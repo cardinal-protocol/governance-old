@@ -64,8 +64,10 @@ abstract contract CardinalProtocolControl {
 
 
 	/* ========== [FUNCTION][MUTATIVE] ========== */
-	/*
-	* Auth Level: _admin 
+	/**
+	* ==========================
+	* === AUTH LEVEL: _admin ===
+	* ==========================
 	*/
 	function set_cardinalProtocolAddress(address cardinalProtocolAddress_) public
 		authLevel_admin()
