@@ -90,6 +90,10 @@ contract AssetAllocator is
 		baseURI = baseURI_;
 	}
 
+	/**
+	 * @notice Set _mintPrice
+	 * @param mintPrice_ New mint price to be set
+	*/
 	function set_mintPrice(uint256 memory mintPrice_) external authLevel_chief() {
 		_mintPrice = mintPrice_;
 	}
