@@ -12,15 +12,15 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 
 
 /* ========== [IMPORT][PERSONAL] ========== */
-import "./abstract/CardinalProtocolControl.sol";
+import "../abstract/CardinalProtocolControl.sol";
 
 
-contract CardinalProtocolToken is ERC20Capped, Pausable, CardinalProtocolControl {
-	/* ========== [DEPENDENCIES] ========== */
-	using SafeERC20 for CardinalProtocolToken;
+contract CardinalProtocol is ERC20Capped, Pausable, CardinalProtocolControl {
+	/* ========== [DEPENDENCY] ========== */
+	using SafeERC20 for CardinalProtocol;
 
 
-	/* ========== [EVENTS] ========== */
+	/* ========== [EVENT] ========== */
 	event SupplyAmountSet(
 		uint amount,
 		address byOwner
@@ -35,20 +35,31 @@ contract CardinalProtocolToken is ERC20Capped, Pausable, CardinalProtocolControl
 	{}
 
 
-	/* ========== [FUNCTIONS][MUTATIVE] ========== */
-	/*
-	* Auth Level: _chief 
+	/* ========== [FUNCTION][PUBLIC][MUTATIVE] ========== */
+	/**
+	* ==========================
+	* === AUTH LEVEL: _chief ===
+	* ==========================
 	*/
-	function mint(address _to, uint256 _amount) external
+	/**
+	 * @notice Mint Asset Allocator
+	 * @param toSend addresses to send the tokens too 
+	 * @param _amount Amount to mint 
+	*/
+	function mint(address toSend, uint256 _amount) public
 		authLevel_chief()
 		whenNotPaused()
 	{
-		// Call ERC20Capped "_mint" function
-		super._mint(_to, _amount);
+		super._mint(toSend, _amount);
 	}
 
-	/*
-	* Auth Level: _manager
+	/**
+	* ============================
+	* === AUTH LEVEL: _manager ===
+	* ============================
+	*/
+	/**
+	 * @notice Pause the contract
 	*/
 	function pause() public
 		authLevel_manager()
@@ -58,6 +69,9 @@ contract CardinalProtocolToken is ERC20Capped, Pausable, CardinalProtocolControl
 		super._pause();
 	}
 
+	/**
+	 * @notice Unpause the contract
+	*/
 	function unpause() public
 		authLevel_manager()
 		whenNotPaused()

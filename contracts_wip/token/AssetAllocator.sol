@@ -15,8 +15,8 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 
 /* ========== [IMPORT-PERSONAL] ========== */
-import "./abstract/CardinalProtocolControl.sol";
-import "./abstract/UniswapSwapper.sol";
+import "../abstract/CardinalProtocolControl.sol";
+import "../abstract/UniswapSwapper.sol";
 
 
 /**
@@ -24,7 +24,7 @@ import "./abstract/UniswapSwapper.sol";
  * @notice Asset Management Protocol
  * @author harpoonjs.eth
 */
-contract AssetAllocatorToken is
+contract AssetAllocator is
 	ERC721Enumerable,
 	Pausable,
 	CardinalProtocolControl,

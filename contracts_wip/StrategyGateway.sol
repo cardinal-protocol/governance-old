@@ -11,19 +11,15 @@ import "@openzeppelin/contracts/interfaces/IERC721.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
 
-/* ========== [IMPORT-PERSONAL] ========== */
+/* ========== [IMPORT][PERSONAL] ========== */
 import "./abstract/CardinalProtocolControl.sol";
-import "./abstract/UniswapSwapper.sol";
 
 
-/// @title Cardinal Protocol Asset Allocators (CPAA)
-/// @notice Asset Management Protocol
-/// @author harpoonjs.eth
-contract AssetAllocations is
-	Pausable,
-	CardinalProtocolControl,
-	UniswapSwapper
-{
+/**
+ * @title Strategy Gateway
+ * @author harpoonjs.eth
+*/
+contract StrategyGateway is Pausable, CardinalProtocolControl {
 	/* ========== [EVENT] ========== */
 	event DepositedWETH(
 		uint256 CPAATokenId,
@@ -47,20 +43,31 @@ contract AssetAllocations is
 	);
 
 
-	/* ========== [STATE VARIABLE] ========== */
+	/* ========== [STATE-VARIABLE][CONSTANT] ========== */
+	address private constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+
+	address private CPAA;
+
+
+	/* ========== [STATE-VARIABLE] ========== */
 	mapping (uint64 => address) _whitelistedStrategyAddresses;
 	mapping (uint256 => uint256) _WETHBalances;
 
 
 	/* ========== [CONTRUCTOR] ========== */
-	constructor (address cardinalProtocolAddress_)
+	constructor (address cardinalProtocolAddress_, address CPAA_)
 		CardinalProtocolControl(cardinalProtocolAddress_)
-	{}
+	{
+		// [ASSIGN][CONSTANT]
+		CPAA = CPAA_;
+	}
 
 
 	/* ========== [MODIFIER] ========== */
-	/// @notice Check if msg.sender owns the CPAA
-	/// @param CPAATokenId CPAA Token Id
+	/**
+	 * @notice Check if msg.sender owns the CPAA
+	 * @param CPAATokenId CPAA Token Id
+	*/
 	modifier auth_ownsCPAA(uint256 CPAATokenId) {
 		// Check if the wallet owns the assetAllocatorId
 		require(
@@ -72,10 +79,12 @@ contract AssetAllocations is
 	}
 
 
-	/* ========== [FUNCTION] ========== */
-	/// @notice Deposit WETH into this contract
-	/// @param CPAATokenId CPAA Token Id
-	/// @param amount Amount that is to be deposited
+	/* ========== [FUNCTION][PUBLIC] ========== */
+	/**
+	 * @notice [DEPOSIT] WETH
+	 * @param CPAATokenId CPAA Token Id
+	 * @param amount Amount that is to be deposited
+	*/
 	function depositWETH(uint256 CPAATokenId, uint256 amount) public payable
 		whenNotPaused()
 		auth_ownsCPAA(CPAATokenId)
@@ -94,9 +103,11 @@ contract AssetAllocations is
 		emit DepositedWETH(CPAATokenId, amount);
 	}
 
-	/// @notice Withdraw WETH
-	/// @param CPAATokenId CPAA Token Id
-	/// @param amount Amount that is to be withdrawn
+	/**
+	 * @notice [WITHDRAW] WETH
+	 * @param CPAATokenId CPAA Token Id
+	 * @param amount Amount that is to be withdrawn
+	*/
 	function withdrawWETH(uint256 CPAATokenId, uint256 amount) public payable {
 		require(_WETHBalances[CPAATokenId] >= amount, "You do not have enough WETH");
 
@@ -113,24 +124,14 @@ contract AssetAllocations is
 		emit WithdrewWETH(CPAATokenId, amount);
 	}
 
-	/// @notice Withdraw All WETH
-	/// @param CPAATokenId CPAA Token Id
-	function withdrawAllWETH(uint256 CPAATokenId) public payable {
-		IERC20(WETH).transferFrom(
-			address(this),
-			msg.sender,
-			_WETHBalances[CPAATokenId]
-		);
-
-		// [SUBTRACT] _WETHBalances
-		_WETHBalances[CPAATokenId] = 0;
-	}
-
-	/// @notice Deposit WETH into strategies following guidelines 
-	/// @param CPAATokenId CPAA Token Id
-	function deployWETHToStrategy(
+	/**
+	 * @notice [DEPOSIT-TO] Strategy 
+	 * @param CPAATokenId CPAA Token Id
+	*/
+	function depositToStrategy(
 		uint256 CPAATokenId,
-		uint64 strategyId
+		uint64 strategyId,
+		uint256[] memory amounts
 	) public
 		whenNotPaused()
 		auth_ownsCPAA(CPAATokenId)
@@ -139,15 +140,21 @@ contract AssetAllocations is
 		emit DepositedTokensIntoStrategy(
 			CPAATokenId,
 			strategyId,
-			amounts_
+			amounts
 		);
 
 		// Reset balance
 		_WETHBalances[CPAATokenId] = 0;
 	}
 
-	/// @param CPAATokenId CPAA Token Id
-	function withdrawTokensFromStrategies(CPAATokenId) public
+	/**
+	 * @notice [WITHDRAW-FROM] Strategy
+	 * @param CPAATokenId CPAA Token Id
+	*/
+	function withdrawFromStrategy(
+		uint256 CPAATokenId,
+		uint64 strategyId
+	) public
 		auth_ownsCPAA(CPAATokenId)
 	{}
 }
