@@ -29,7 +29,7 @@ contract CardinalProtocol is ERC20Capped, Pausable, CardinalProtocolControl {
 
 	/* ========== [CONSTRUCTOR] ========== */
 	constructor (address cardinalProtocolAddress_)
-		ERC20("Cardinal Protocol Token", "CPT")
+		ERC20("Cardinal Protocol", "CARP")
 		ERC20Capped(100 * 1000000 * 1e18)
 		CardinalProtocolControl(cardinalProtocolAddress_)
 	{}
@@ -50,6 +50,7 @@ contract CardinalProtocol is ERC20Capped, Pausable, CardinalProtocolControl {
 		authLevel_chief()
 		whenNotPaused()
 	{
+		// Call Pausable "_mint" function
 		super._mint(toSend, _amount);
 	}
 

@@ -1,4 +1,4 @@
-// contracts/token/AssetAllocator.sol
+// contracts/token/AssetAllocationsKey.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
@@ -14,17 +14,16 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 
-/* ========== [IMPORT-PERSONAL] ========== */
+/* ========== [IMPORT][PERSONAL] ========== */
 import "../abstract/CardinalProtocolControl.sol";
 import "../abstract/UniswapSwapper.sol";
 
 
 /**
- * @title Cardinal Protocol - Asset Allocator Token
- * @notice Asset Management Protocol
+ * @title Cardinal Protocol - Asset Allocations Key
  * @author harpoonjs.eth
 */
-contract AssetAllocator is
+contract AssetAllocationsKey is
 	ERC721Enumerable,
 	Pausable,
 	CardinalProtocolControl,
@@ -34,7 +33,7 @@ contract AssetAllocator is
 	using Counters for Counters.Counter;
 
 
-	/* ========== [STATE VARIABLE] ========== */
+	/* ========== [STATE-VARIABLE] ========== */
 	// Custom Types
 	Counters.Counter public _CPAATokenIdTracker;
 
@@ -42,7 +41,7 @@ contract AssetAllocator is
 	address public _treasury;
 	uint256 public _mintPrice;
 
-	/* ========== [CONTRUCTOR] ========== */
+	/* ========== [CONSTRUCTOR] ========== */
 	constructor (
 		address cardinalProtocolAddress,
 		string memory baseURI_,
