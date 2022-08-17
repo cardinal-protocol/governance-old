@@ -14,7 +14,6 @@ contract BasicERC20 is Strategy {
 
 	/* ========== [CONSTRUCTOR] ========== */
     constructor (address cardinalProtocolControl_, address CPAA_)
-		CardinalProtocolControl(cardinalProtocolControl_)
-		Strategy(CPAA_, "Basic ERC20", requiredTokens_)
+		Strategy(cardinalProtocolControl_, CPAA_, "Basic ERC20", requiredTokens_)
 	{}
 }

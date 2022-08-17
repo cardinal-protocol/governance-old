@@ -10,7 +10,6 @@ import "./CardinalProtocolControl.sol";
 abstract contract Strategy is CardinalProtocolControl {
 	/* ========== [STATE-VARIABLE] ========== */
 	address public CPAA;
-	
 	address public _keeper;
 	
 	string public _name;
@@ -19,19 +18,20 @@ abstract contract Strategy is CardinalProtocolControl {
 	
 	address[] public _acceptedTokens;
 
-	// CPAA => { Accepted Token Addresse => Deposit Balance }
-	mapping (uint256 => mapping (address => uint256)) _deposits;
+	// Balances deposited 
+	mapping (uint256 => uint256[]) public _deposits;
 	
-	mapping (uint256 => uint256) _deployedBalances;
-	mapping (uint256 => uint256) _withdrawRequests;
+	mapping (uint256 => uint256) public _deployedBalances;
+	mapping (uint256 => uint256) public _withdrawRequests;
 
 
 	/* ========== [CONSTRUCTOR] ========== */
 	constructor (
+		address cardinalProtocolControl_,
 		address _CPAA,
 		string memory name_,
 		address[] memory acceptedTokens_
-	) {
+	) CardinalProtocolControl(cardinalProtocolControl_) {
 		CPAA = _CPAA;
 		_name = name_;
 		_acceptedTokens = acceptedTokens_;
@@ -144,4 +144,30 @@ abstract contract Strategy is CardinalProtocolControl {
 	function acceptedTokens() public view virtual returns (address[] memory) {
 		return _acceptedTokens;
 	}
+
+	/**
+     * @notice
+     *  Provide an accurate estimate for the total amount of assets
+     *  (principle + return) that this Strategy is currently managing,
+     *  denominated in terms of `want` tokens.
+     *
+     *  This total should be "realizable" e.g. the total value that could
+     *  *actually* be obtained from this Strategy if it were to divest its
+     *  entire position based on current on-chain conditions.
+     * @dev
+     *  Care must be taken in using this function, since it relies on external
+     *  systems, which could be manipulated by the attacker to give an inflated
+     *  (or reduced) value produced by this function, based on current on-chain
+     *  conditions (e.g. this function is possible to influence through
+     *  flashloan attacks, oracle manipulations, or other DeFi attack
+     *  mechanisms).
+     *
+     *  It is up to governance to use this function to correctly order this
+     *  Strategy relative to its peers in the withdrawal queue to minimize
+     *  losses for the Vault based on sudden withdrawals. This value should be
+     *  higher than the total debt of the Strategy and higher than its expected
+     *  value to be "safe".
+     * @return The estimated total assets in this Strategy.
+	*/
+    function estimatedTotalAssets() public view virtual returns (uint256);
 }
