@@ -1,4 +1,4 @@
-// contracts/AssetAllocator.sol
+// contracts/token/AssetAllocator.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
@@ -40,7 +40,7 @@ contract AssetAllocator is
 
 	string public baseURI;
 	address public _treasury;
-
+	uint256 public _mintPrice;
 
 	/* ========== [CONTRUCTOR] ========== */
 	constructor (
@@ -53,6 +53,7 @@ contract AssetAllocator is
 	{
 		baseURI = baseURI_;
 		_treasury = treasury_;
+		_mintPrice = 0 ether;
 	}
 	
 	
@@ -87,6 +88,10 @@ contract AssetAllocator is
 	*/
 	function setBaseURI(string memory baseURI_) external authLevel_chief() {
 		baseURI = baseURI_;
+	}
+
+	function set_mintPrice(uint256 memory mintPrice_) external authLevel_chief() {
+		_mintPrice = mintPrice_;
 	}
 
 	/**
@@ -129,10 +134,12 @@ contract AssetAllocator is
 	 * @notice Mint Asset Allocator
 	 * @param toSend Array of addresses to send the tokens too 
 	*/
-	function mint(address[] memory toSend) public
+	function mint(address[] memory toSend) public payable
 		whenNotPaused()
 	{
-		// For each toSend, mint the NFT
+        require(msg.value >= _mintPrice, "Invalid msg.value");
+
+        // For each toSend, mint the NFT
 		for (uint i = 0; i < toSend.length; i++) {
 			// Mint token
 			_mint(toSend[i], _CPAATokenIdTracker.current());
