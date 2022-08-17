@@ -16,7 +16,7 @@ abstract contract Strategy is CardinalProtocolControl {
 	/* ========== [STATE-VARIABLE] ========== */
 	address public _keeper;
 	string public _name;
-	bool public _active = false;
+	bool public _active;
 
 	mapping (uint256 => uint256[]) public _undeployedBalances;
 	mapping (uint256 => uint256) public _deployedBalances;
@@ -35,6 +35,7 @@ abstract contract Strategy is CardinalProtocolControl {
 
 		// [ASSIGN]
 		_name = name_;
+		_active = false;
 	}
 
 	/* ========== [MODIFIER] ========== */
