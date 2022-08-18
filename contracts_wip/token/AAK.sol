@@ -47,12 +47,12 @@ contract AssetAllocationsKey is
 		string memory baseURI_,
 		address treasury_
 	)
-		ERC721("Cardinal Protocol Asset Allocator Token", "CPAA")
+		ERC721("Asset Allocations Key", "AAK")
 		CardinalProtocolControl(cardinalProtocolAddress)
 	{
 		baseURI = baseURI_;
 		_treasury = treasury_;
-		_mintPrice = 0 ether;
+		_mintPrice = 0.00005 ether;
 	}
 	
 	

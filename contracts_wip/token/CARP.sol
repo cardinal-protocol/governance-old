@@ -29,7 +29,7 @@ contract CardinalProtocol is ERC20Capped, Pausable, CardinalProtocolControl {
 
 	/* ========== [CONSTRUCTOR] ========== */
 	constructor (address cardinalProtocolAddress_)
-		ERC20("Cardinal Protocol", "CARP")
+		ERC20("Cardinal Protocol Token", "CARP")
 		ERC20Capped(100 * 1000000 * 1e18)
 		CardinalProtocolControl(cardinalProtocolAddress_)
 	{}
