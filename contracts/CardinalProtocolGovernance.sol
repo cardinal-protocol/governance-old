@@ -20,45 +20,4 @@ contract CardinalProtocolGovernance is AccessControlEnumerable {
 	constructor () {
 		_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 	}
-
-	/* ========== [FUNCTIONS][VIEW] ========== */
-	function authLevel_admin(address caller) public view returns (bool) {
-		return
-			hasRole(DEFAULT_ADMIN_ROLE, caller)
-		;
-	}
-
-	function authLevelS(address caller) public view returns (bool) {
-		return
-			hasRole(DEFAULT_ADMIN_ROLE, caller) ||
-			hasRole(S, caller)
-		;
-	}
-
-	function authLevelA(address caller) public view returns (bool) {
-		return
-			hasRole(DEFAULT_ADMIN_ROLE, caller) ||
-			hasRole(S, caller) ||
-			hasRole(A, caller)
-		;
-	}
-
-	function authLevelB(address caller) public view returns (bool) {
-		return
-			hasRole(DEFAULT_ADMIN_ROLE, caller) ||
-			hasRole(S, caller) ||
-			hasRole(A, caller) ||
-			hasRole(B, caller)
-		;
-	}
-
-	function authLevelC(address caller) public view returns (bool) {
-		return
-			hasRole(DEFAULT_ADMIN_ROLE, caller) ||
-			hasRole(S, caller) ||
-			hasRole(A, caller) ||
-			hasRole(B, caller) ||
-			hasRole(C, caller)
-		;
-	}
 }
