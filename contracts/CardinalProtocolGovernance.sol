@@ -1,4 +1,3 @@
-// contracts/CardinalProtocolGovernance.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
@@ -7,18 +6,8 @@ pragma solidity ^0.8.10;
 // @openzeppelin/contracts/access
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 
-
-/**
-* @title ICardinalProtocolGovernance
-*/
-interface ICardinalProtocolGovernance
-{
-	/* [STATE VARIABLES] */
-	function S() external view returns (bytes32);
-	function A() external view returns (bytes32);
-	function B() external view returns (bytes32);
-	function C() external view returns (bytes32);
-}
+/* [IMPORT] Internal */
+import "./interface/ICardinalProtocolGovernance.sol";
 
 
 /**
@@ -29,9 +18,13 @@ contract CardinalProtocolGovernance is
 	ICardinalProtocolGovernance
 {
 	/* [STATE VARIABLES] */
+	/// @inheritdoc ICardinalProtocolGovernance
 	bytes32 public constant S = keccak256("S");
+	/// @inheritdoc ICardinalProtocolGovernance
 	bytes32 public constant A = keccak256("A");
+	/// @inheritdoc ICardinalProtocolGovernance
 	bytes32 public constant B = keccak256("B");
+	/// @inheritdoc ICardinalProtocolGovernance
 	bytes32 public constant C = keccak256("C");
 
 
