@@ -8,7 +8,23 @@ pragma solidity ^0.8.10;
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 
 
-contract CardinalProtocolGovernance is AccessControlEnumerable {
+/* [INTERFACE] */
+interface ICardinalProtocolGovernance {
+	/* [STATE VARIABLES] */
+	function S() external view returns (bytes32);
+	function A() external view returns (bytes32);
+	function B() external view returns (bytes32);
+	function C() external view returns (bytes32);
+}
+
+
+/**
+* @title CardinalProtocolGovernance
+*/
+contract CardinalProtocolGovernance is
+	AccessControlEnumerable,
+	ICardinalProtocolGovernance
+{
 	/* [STATE VARIABLES] */
 	bytes32 public constant S = keccak256("S");
 	bytes32 public constant A = keccak256("A");
