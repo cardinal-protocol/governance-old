@@ -4,8 +4,38 @@ pragma solidity ^0.8.10;
 
 /* [IMPORT] */
 // @openzeppelin/contracts/access
-import "@cardinal-protocol/v1-sdk/contracts/interface/ICardinalProtocolGovernance.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+
+
+/**
+* @title ICardinalProtocolGovernance
+*/
+interface ICardinalProtocolGovernance
+{
+	/**
+	* @notice AccessControl Role
+	* @return {bytes32} keccak256 value
+	*/
+	function S() external view returns (bytes32);
+
+	/**
+	* @notice AccessControl Role
+	* @return {bytes32} keccak256 value
+	*/
+	function A() external view returns (bytes32);
+
+	/**
+	* @notice AccessControl Role
+	* @return {bytes32} keccak256 value
+	*/
+	function B() external view returns (bytes32);
+
+	/**
+	* @notice AccessControl Role
+	* @return {bytes32} keccak256 value
+	*/
+	function C() external view returns (bytes32);
+}
 
 
 /**
