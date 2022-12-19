@@ -34,7 +34,8 @@ contract CardinalProtocolGovernance is
 
 
 	/* [CONSTRUCTOR] */
-	constructor () {
+	constructor ()
+	{
 		_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 	}
 }
