@@ -24,6 +24,7 @@ interface ICardinalProtocolGovernance
 */
 contract CardinalProtocolGovernance is
 	AccessControlEnumerable
+	ICardinalProtocolGovernance
 {
 	/* [STATE VARIABLES] */
 	bytes32 public constant S = keccak256("S");
