@@ -4,10 +4,8 @@ pragma solidity ^0.8.10;
 
 /* [IMPORT] */
 // @openzeppelin/contracts/access
+import "@cardinal-protocol/v1-sdk/contracts/interface/ICardinalProtocolGovernance.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
-
-/* [IMPORT] Internal */
-import "./interface/ICardinalProtocolGovernance.sol";
 
 
 /**
