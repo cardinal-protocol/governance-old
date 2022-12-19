@@ -9,7 +9,8 @@ import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 
 
 /* [INTERFACE] */
-interface ICardinalProtocolGovernance {
+interface ICardinalProtocolGovernance
+{
 	/* [STATE VARIABLES] */
 	function S() external view returns (bytes32);
 	function A() external view returns (bytes32);
@@ -22,8 +23,7 @@ interface ICardinalProtocolGovernance {
 * @title CardinalProtocolGovernance
 */
 contract CardinalProtocolGovernance is
-	AccessControlEnumerable,
-	ICardinalProtocolGovernance
+	AccessControlEnumerable
 {
 	/* [STATE VARIABLES] */
 	bytes32 public constant S = keccak256("S");
