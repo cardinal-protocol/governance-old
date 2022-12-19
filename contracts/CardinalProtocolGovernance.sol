@@ -2,11 +2,10 @@
 pragma solidity ^0.8.10;
 
 
-/* [IMPORT] */
-// @openzeppelin/contracts/access
+/* [import] */
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 
-/* [IMPORT] Internal */
+/* [import] Internal */
 import "./interface/ICardinalProtocolGovernance.sol";
 
 
@@ -25,7 +24,7 @@ contract CardinalProtocolGovernance is
 	AccessControlEnumerable,
 	ICardinalProtocolGovernance
 {
-	/* [STATE VARIABLES] */
+	/* [state-variables] */
 	/// @inheritdoc ICardinalProtocolGovernance
 	bytes32 public constant S = keccak256("S");
 	/// @inheritdoc ICardinalProtocolGovernance
@@ -36,7 +35,7 @@ contract CardinalProtocolGovernance is
 	bytes32 public constant C = keccak256("C");
 
 
-	/* [CONSTRUCTOR] */
+	/* [constructor] */
 	constructor ()
 	{
 		_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
