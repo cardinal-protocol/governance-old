@@ -23,7 +23,7 @@ interface ICardinalProtocolGovernance
 * @title CardinalProtocolGovernance
 */
 contract CardinalProtocolGovernance is
-	AccessControlEnumerable
+	AccessControlEnumerable,
 	ICardinalProtocolGovernance
 {
 	/* [STATE VARIABLES] */
