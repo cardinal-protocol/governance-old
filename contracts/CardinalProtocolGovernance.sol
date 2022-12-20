@@ -35,9 +35,60 @@ contract CardinalProtocolGovernance is
 	bytes32 public constant C = keccak256("C");
 
 
-	/* [constructor] */
+	/** [constructor] */
 	constructor ()
 	{
 		_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
+	}
+
+	/** [public][view] */
+	/// @inheritdoc ICardinalProtocolGovernance
+	function hasClearanceAdmin(address a) public view returns (bool)
+	{
+		return
+			hasRole(DEFAULT_ADMIN_ROLE, a)
+		;
+	}
+
+	/// @inheritdoc ICardinalProtocolGovernance
+	function hasClearanceS(address a) public view returns (bool)
+	{
+		return
+			hasRole(DEFAULT_ADMIN_ROLE, a) ||
+			hasRole(S, a)
+		;
+	}
+
+	/// @inheritdoc ICardinalProtocolGovernance
+	function hasClearanceA(address a) public view returns (bool)
+	{
+		return
+			hasRole(DEFAULT_ADMIN_ROLE, a) ||
+			hasRole(S, a) ||
+			hasRole(A, a)
+		;
+	}
+
+	/// @inheritdoc ICardinalProtocolGovernance
+	function hasClearanceB(address a) public view returns (bool)
+	{
+		return
+			hasRole(DEFAULT_ADMIN_ROLE, a) ||
+			hasRole(S, a) ||
+			hasRole(A, a) ||
+			hasRole(B, a)
+		;
+	}
+
+	/// @inheritdoc ICardinalProtocolGovernance
+	function hasClearanceC(address a) public view returns (bool)
+	{
+		return
+			hasRole(DEFAULT_ADMIN_ROLE, a) ||
+			hasRole(S, a) ||
+			hasRole(A, a) ||
+			hasRole(B, a) ||
+			hasRole(C, a)
+		;
 	}
 }
