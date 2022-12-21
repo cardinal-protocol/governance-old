@@ -35,7 +35,7 @@ contract CardinalProtocolGovernance is
 	bytes32 public constant C = keccak256("C");
 
 
-	/** [constructor] */
+	/* [constructor] */
 	constructor ()
 	{
 		_setRoleAdmin(DEFAULT_ADMIN_ROLE, S);
